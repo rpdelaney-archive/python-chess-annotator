@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 """
+© Copyright 2016 Ryan Delaney. All rights reserved.
+
 Reads a chess game in PGN format (https://en.wikipedia.org/wiki/Portable_Game_Notation)
 Uses an engine (stockfish) to evaluate the quality of play and add annotations (https://github.com/official-stockfish/Stockfish)
 Prints PGN data with the added annotations
 
 TODO:
-  lines 119, 138, 159-165 - don't concatenate strings to print them, use string formatting: "Delta: {}".format(delta)
   Don't hardcode the engine and PGN inputs - read them from somewhere (args? STDIN?) (check out argparse)
   Try to cut down on the "magic numbers" somehow (dictionary?)
   Time-based analysis limits: instead of specifying a searchdepth, give a time limit on how long to spend analyzing the game
