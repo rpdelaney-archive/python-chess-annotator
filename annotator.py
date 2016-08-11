@@ -8,7 +8,6 @@ Uses an engine (stockfish) to evaluate the quality of play and add annotations (
 Prints PGN data with the added annotations
 
 TODO:
-  Don't hardcode the engine and PGN inputs - read them from somewhere (args? STDIN?) (check out argparse)
   Don't truncate a PV that ends in mate
   Try to cut down on the "magic numbers" somehow (dictionary?)
   Time-based analysis limits: instead of specifying a searchdepth, give a time limit on how long to spend analyzing the game
@@ -18,6 +17,20 @@ TODO:
 import chess
 import chess.uci
 import chess.pgn
+import sys
+import os
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--file", "-f", help="input file", required=True)
+parser.add_argument("--depth", "-d", help="search depth", required=False)
+
+args = parser.parse_args()
+
+# Check that the input file is readable
+if not args.file or not os.path.exists(args.file):
+    sys.stderr.write("file '{}' does not exist.\n".format(args.file))
+    sys.exit(1)
 
 
 class Evaluation(object):
@@ -71,7 +84,7 @@ class Evaluation(object):
         """
         # Get the score, what we really care about
         if info_handler.info["score"][1].mate is not None:
-            return "Mate in ", score.mate
+            return "Mate in ", info_handler.info["score"][1].mate
         elif info_handler.info["score"][1].cp is not None:
             # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
             return str(info_handler.info["score"][1].cp / 100)
@@ -231,17 +244,13 @@ def main():
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
-    depth = 15
+    if args.depth:
+        depth = int(args.depth)
+    else:
+        depth = 12
 
     # Open a PGN file
-   #pgnfile = "/home/ryan/game.pgn"
-   #pgnfile = "/home/ryan/mini.pgn"
-    pgnfile = "foo.pgn"
-   #pgnfile = "karpov.pgn"
-   #pgnfile = "zugswang.pgn"
-   #pgnfile = "giri-ding.pgn"
-   #pgnfile = "bird.pgn"
-   #pgnfile = "stale.pgn"
+    pgnfile = args.file
     with open(pgnfile) as pgn:
         game = chess.pgn.read_game(pgn)
 
@@ -290,3 +299,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# vim: ft=python:
