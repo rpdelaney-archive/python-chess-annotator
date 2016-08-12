@@ -122,7 +122,7 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
 
     # Annotate the best move
     if info_handler.info["score"][1].mate is not None:
-        judgment["bestcomment"] = "Mate in ", info_handler.info["score"][1].mate
+        judgment["bestcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
     elif info_handler.info["score"][1].cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
         judgment["bestcomment"] = str(info_handler.info["score"][1].cp / 100)
@@ -143,7 +143,7 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
 
     # Annotate the played move
     if info_handler.info["score"][1].mate is not None:
-        judgment["playedcomment"] = "Mate in ", info_handler.info["score"][1].mate
+        judgment["playedcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
     elif info_handler.info["score"][1].cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
         judgment["playedcomment"] = str(info_handler.info["score"][1].cp / 100)
@@ -212,7 +212,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
 
     # Add the engine evaluation
     if judgment["bestmove"] != node.move:
-        node.comment = str(human_played_score)
+        node.comment = judgment["playedcomment"]
 
     # Add the engine's primary variation (PV) as an annotation
     # We truncate the PV to one half the search depth because engine variations tend to get silly near the end
@@ -226,7 +226,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
             var_node = var_node.variation(move)
 
     # Add a comment to the end of the variation explaining the game state
-    var_node.comment = var_end_comment(var_node, human_best_score)
+    var_node.comment = judgment["bestcomment"]
 
     # We added the variation as the main line, so now it has to be demoted
     # (This is done so that variations can be added to the final node)
@@ -287,8 +287,10 @@ def main():
         # Print some debugging info
         print("Best move: ",      prev_node.board().san(judgment["bestmove"]))
         print("Best eval: ",      str(judgment["besteval"]))
+        print("Best comment: ",   str(judgment["bestcomment"]))
         print("PV: ",             prev_node.board().variation_san(judgment["pv"]))
         print("Played eval: ",    str(judgment["playedeval"]))
+        print("Played comment: ", str(judgment["playedcomment"]))
         print("Delta: ",          str(judgment["playedeval"] - judgment["besteval"]))
         print("")
 
