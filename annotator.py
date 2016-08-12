@@ -234,7 +234,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
 
 def main():
     # Initialize the engine
-    engine = chess.uci.popen_engine("/usr/bin/stockfish")
+    engine = chess.uci.popen_engine("/usr/bin/stockfishies")
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
@@ -273,8 +273,6 @@ def main():
         print(node.board())
         print(node.board().fen())
         print("Played move: ", prev_node.board().san(node.move))
-        node = prev_node
-        continue
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
@@ -291,6 +289,8 @@ def main():
         print("Played comment: ", str(judgment["playedcomment"]))
         print("Delta: ",          str(judgment["playedeval"] - judgment["besteval"]))
         print("")
+
+        node = prev_node
 
 
     node.comment = engine.name + " Depth: " + str(depth)
