@@ -32,75 +32,56 @@ if not args.file or not os.path.exists(args.file):
     sys.stderr.write("file '{}' does not exist.\n".format(args.file))
     sys.exit(1)
 
+# Used to be in a class
+def eval_numeric(info_handler):
+    """
+    Returns a numeric evaluation of the position, even if depth-to-mate was
+    found. This facilitates comparing numerical evaluations with depth-to-mate
+    evaluations
+    """
+    if info_handler.info["score"][1].mate is not None:
+        # We have depth-to-mate (dtm), so translate it into a numerical
+        # evaluation. This number needs to be just big enough to guarantee that
+        # it is always greater than a non-dtm evaluation.
 
-class Evaluation(object):
+        max_score = 10000
+        dtm = info_handler.info["score"][1].mate
 
-    def __init__(self, info_handler):
-        self.info_handler = info_handler
-        # Let's just pass the score, since that's all this function needs
-        self.numeric = self.get_numeric(info_handler['score'][1].cp)
-        # For this function, we'll let it use the class member
-        self.human_eval = self.get_human_eval()
+        if dtm >= 1:
+            result = max_score-dtm
+        else:
+            result = -(max_score-dtm)
 
-    # The static method decorator means this function does not get the
-    # standard first argument passed to any instance method of a class: self
-    # self is the instance in question
-    # Whether it makes sense to have this as a separate function or just roll
-    # it into __init__ is sort of a testability/style thing
-    @staticmethod
-    def numeric(info_handler):
-        """
-        Returns a numeric evaluation of the position, even if depth-to-mate was
-        found. This facilitates comparing numerical evaluations with depth-to-mate
-        evaluations
-        """
-        if info_handler.info["score"][1].mate is not None:
-            # We have depth-to-mate (dtm), so translate it into a numerical
-            # evaluation. This number needs to be just big enough to guarantee that
-            # it is always greater than a non-dtm evaluation.
+    elif info_handler.info["score"][1].cp is not None:
+        # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
+        result = info_handler.info["score"][1].cp
 
-            max_score = 10000
-            dtm = info_handler.info["score"][1].mate
+    return result
 
-            if dtm >= 1:
-                result = max_score-dtm
-            else:
-                result = -(max_score-dtm)
-
-        elif info_handler.info["score"][1].cp is not None:
-            # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
-            result = info_handler.info["score"][1].cp
-
-        return result
-
-    # As an alternative, instead of using a static method, we can use a
-    # normal instance method, and let the method access the instance's
-    # info_handler member
-    def human(info_handler):
-        """
-        Returns a human-readable evaluation of the position:
-            If depth-to-mate was found, return plain-text mate announcement (e.g. "White mates in 4")
-            If depth-to-mate was not found, return an absolute numeric evaluation
-        """
-        # Get the score, what we really care about
-        if info_handler.info["score"][1].mate is not None:
-            return "Mate in ", info_handler.info["score"][1].mate
-        elif info_handler.info["score"][1].cp is not None:
-            # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-            return str(info_handler.info["score"][1].cp / 100)
+def eval_human(info_handler):
+    """
+    Returns a human-readable evaluation of the position:
+        If depth-to-mate was found, return plain-text mate announcement (e.g. "White mates in 4")
+        If depth-to-mate was not found, return an absolute numeric evaluation
+    """
+    if info_handler.info["score"][1].mate is not None:
+        return "Mate in ", info_handler.info["score"][1].mate
+    elif info_handler.info["score"][1].cp is not None:
+        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
+        return str(info_handler.info["score"][1].cp / 100)
 
 
-    def absolute(number, white_to_move):
-        """
-        Accepts a relative evaluation (from the point of view of the player to
-        move) and returns an absolute evaluation (from the point of view of white)
-        """
+def eval_absolute(number, white_to_move):
+    """
+    Accepts a relative evaluation (from the point of view of the player to
+    move) and returns an absolute evaluation (from the point of view of white)
+    """
 
-        if not white_to_move:
-            number = -number
+    if not white_to_move:
+        number = -number
 
-        # Humans are used to evaluations padded with zeroes
-        return '{:.2f}'.format(number)
+    # Humans are used to evaluations padded with zeroes
+    return '{:.2f}'.format(number)
 
 
 def needs_annotation(judgment):
@@ -121,10 +102,12 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
      Returns a judgment
 
      A judgment is a dictionary containing the following elements:
-           "bestmove":     The best move in the position, according to the engine
-           "besteval":     A numeric evaluation of the position after the best move is played
-           "pv":           The engine's primary variation including the best move
-           "playedeval":   A numeric evaluation of the played move
+           "bestmove":      The best move in the position, according to the engine
+           "besteval":      A numeric evaluation of the position after the best move is played
+           "bestcomment":   A plain-text comment appropriate for annotating the best move
+           "pv":            The engine's primary variation including the best move
+           "playedeval":    A numeric evaluation of the played move
+           "playedcomment": A plain-text comment appropriate for annotating the played move
     """
 
     judgment = {}
@@ -134,8 +117,15 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
     engine.go(depth=searchdepth)
 
     judgment["bestmove"] = engine.bestmove
-    judgment["besteval"] = Evaluation.numeric(info_handler)
+    judgment["besteval"] = eval_numeric(info_handler)
     judgment["pv"] = info_handler.info["pv"][1]
+
+    # Annotate the best move
+    if info_handler.info["score"][1].mate is not None:
+        judgment["bestcomment"] = "Mate in ", info_handler.info["score"][1].mate
+    elif info_handler.info["score"][1].cp is not None:
+        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
+        judgment["bestcomment"] = str(info_handler.info["score"][1].cp / 100)
 
     # If the played move matches the engine bestmove, we're done
     if played_move == engine.bestmove:
@@ -146,10 +136,18 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
         engine.position(board)                              # Set the engine position to the board position
         engine.go(depth=searchdepth)                        # Run a search on the engine position to depth = searchdepth
 
-        judgment["playedeval"] = -Evaluation.numeric(info_handler)  # Store the numeric evaluation. We invert the sign since we're now evaluating from the opponent's perspective
+        judgment["playedeval"] = -eval_numeric(info_handler)  # Store the numeric evaluation. We invert the sign since we're now evaluating from the opponent's perspective
 
         # Take the played move off the stack (reset the board)
         board.pop()
+
+    # Annotate the played move
+    if info_handler.info["score"][1].mate is not None:
+        judgment["playedcomment"] = "Mate in ", info_handler.info["score"][1].mate
+    elif info_handler.info["score"][1].cp is not None:
+        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
+        judgment["playedcomment"] = str(info_handler.info["score"][1].cp / 100)
+
 
     return judgment
 
@@ -202,15 +200,15 @@ def var_end_comment(node, score):
         return score
 
 
-def add_annotation(node, handler, judgment, searchdepth):
+def add_annotation(node, info_handler, judgment, searchdepth):
     """
     Add evaluations and the engine's primary variation as annotations to a node
     """
     prev_node = node.parent
 
     # Calculate absolute scores in pawns rather than centipawns (these are easier for humans to read)
-    human_played_score = Evaluation.absolute(judgment["playedeval"] / 100, node.parent.board().turn)
-    human_best_score = Evaluation.absolute(judgment["besteval"] / 100, node.parent.board().turn)
+    human_played_score = eval_absolute(judgment["playedeval"] / 100, node.parent.board().turn)
+    human_best_score = eval_absolute(judgment["besteval"] / 100, node.parent.board().turn)
 
     # Add the engine evaluation
     if judgment["bestmove"] != node.move:
@@ -251,8 +249,12 @@ def main():
 
     # Open a PGN file
     pgnfile = args.file
-    with open(pgnfile) as pgn:
-        game = chess.pgn.read_game(pgn)
+    try:
+        with open(pgnfile) as pgn:
+            game = chess.pgn.read_game(pgn)
+    except PermissionError:
+        print("Input file not readable.")
+        sys.exit(1)
 
     # Advance to the end of the game
     node = game.end()
