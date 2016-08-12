@@ -234,7 +234,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
 
 def main():
     # Initialize the engine
-    engine = chess.uci.popen_engine("/usr/bin/stockfishies")
+    engine = chess.uci.popen_engine("/usr/bin/stockfish")
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
