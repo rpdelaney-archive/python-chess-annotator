@@ -58,6 +58,7 @@ def eval_numeric(info_handler):
 
     return result
 
+
 def eval_human(info_handler):
     """
     Returns a human-readable evaluation of the position:
@@ -148,7 +149,6 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
         judgment["playedcomment"] = str(info_handler.info["score"][1].cp / 100)
 
-
     return judgment
 
 
@@ -205,10 +205,6 @@ def add_annotation(node, info_handler, judgment, searchdepth):
     Add evaluations and the engine's primary variation as annotations to a node
     """
     prev_node = node.parent
-
-    # Calculate absolute scores in pawns rather than centipawns (these are easier for humans to read)
-    human_played_score = eval_absolute(judgment["playedeval"] / 100, node.parent.board().turn)
-    human_best_score = eval_absolute(judgment["besteval"] / 100, node.parent.board().turn)
 
     # Add the engine evaluation
     if judgment["bestmove"] != node.move:
@@ -277,6 +273,8 @@ def main():
         print(node.board())
         print(node.board().fen())
         print("Played move: ", prev_node.board().san(node.move))
+        node = prev_node
+        continue
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
@@ -294,7 +292,6 @@ def main():
         print("Delta: ",          str(judgment["playedeval"] - judgment["besteval"]))
         print("")
 
-        node = prev_node
 
     node.comment = engine.name + " Depth: " + str(depth)
 
