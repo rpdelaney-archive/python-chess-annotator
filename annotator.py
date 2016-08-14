@@ -32,7 +32,7 @@ if not args.file or not os.path.exists(args.file):
     sys.stderr.write("file '{}' does not exist.\n".format(args.file))
     sys.exit(1)
 
-# Used to be in a class
+
 def eval_numeric(info_handler):
     """
     Returns a numeric evaluation of the position, even if depth-to-mate was
@@ -126,7 +126,8 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
         judgment["bestcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
     elif info_handler.info["score"][1].cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        judgment["bestcomment"] = str(info_handler.info["score"][1].cp / 100)
+        comment_score = eval_absolute(info_handler.info["score"][1].cp / 100, board.turn)
+        judgment["bestcomment"] = str(comment_score)
 
     # If the played move matches the engine bestmove, we're done
     if played_move == engine.bestmove:
@@ -147,7 +148,8 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
         judgment["playedcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
     elif info_handler.info["score"][1].cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        judgment["playedcomment"] = str(info_handler.info["score"][1].cp / 100)
+        comment_score = eval_absolute(info_handler.info["score"][1].cp / -100, board.turn)
+        judgment["playedcomment"] = str(comment_score)
 
     return judgment
 
