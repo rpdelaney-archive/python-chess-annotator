@@ -1,0 +1,3 @@
+[submodule "eco"]
+	path = eco
+	url = git@github.com:niklasf/eco.git
