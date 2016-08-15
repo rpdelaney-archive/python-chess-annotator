@@ -34,6 +34,15 @@ if not args.file or not os.path.exists(args.file):
     sys.exit(1)
 
 
+def classify_eco(fen):
+    """
+    Search a json db for a given fen, and return an opening classification if
+    it matches
+    Otherwise, return false
+    """
+    return False
+
+
 def eval_numeric(info_handler):
     """
     Returns a numeric evaluation of the position, even if depth-to-mate was
