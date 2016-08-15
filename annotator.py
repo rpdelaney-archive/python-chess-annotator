@@ -8,6 +8,7 @@ Uses an engine (stockfish) to evaluate the quality of play and add annotations (
 Prints PGN data with the added annotations
 
 TODO:
+  Classify the openings and don't analyze positions before a classification
   Don't truncate a PV that ends in mate
   Try to cut down on the "magic numbers" somehow (dictionary?)
   Time-based analysis limits: instead of specifying a searchdepth, give a time limit on how long to spend analyzing the game
