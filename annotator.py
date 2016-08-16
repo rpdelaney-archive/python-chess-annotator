@@ -25,7 +25,7 @@ import logging
 parser = argparse.ArgumentParser()
 parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
 parser.add_argument("--file", "-f", help="input file", required=True)
-parser.add_argument("--depth", "-d", help="search depth", required=False)
+parser.add_argument("--depth", "-d", help="search depth", required=False, default="14")
 parser.add_argument("--verbose", "-v", help="increase verbosity", required=False, action="count")
 
 args = parser.parse_args()
@@ -266,10 +266,8 @@ def main():
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
-    if args.depth:
-        depth = int(args.depth)
-    else:
-        depth = 12
+
+    depth = int(args.depth)
 
     # Open a PGN file
     pgnfile = args.file
