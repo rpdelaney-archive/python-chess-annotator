@@ -35,16 +35,17 @@ if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
-if args.verbose >= 3:
-    # EVERYTHING TO LOG FILE
-    # fill this in later
-    logger.setLevel(logging.DEBUG)
-elif args.verbose == 2:
-    # DEBUG TO STDERR
-    logger.setLevel(logging.DEBUG)
-elif args.verbose == 1:
-    # INFO TO STDERR
-    logger.setLevel(logging.INFO)
+if args.verbose:
+    if args.verbose >= 3:
+        # EVERYTHING TO LOG FILE
+        # fill this in later
+        logger.setLevel(logging.DEBUG)
+    elif args.verbose == 2:
+        # DEBUG TO STDERR
+        logger.setLevel(logging.DEBUG)
+    elif args.verbose == 1:
+        # INFO TO STDERR
+        logger.setLevel(logging.INFO)
 
 # Check that the input file is readable
 if not args.file or not os.path.exists(args.file):
