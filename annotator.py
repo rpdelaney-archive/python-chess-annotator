@@ -23,6 +23,7 @@ import argparse
 import logging
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
 parser.add_argument("--file", "-f", help="input file", required=True)
 parser.add_argument("--depth", "-d", help="search depth", required=False)
 parser.add_argument("--verbose", "-v", help="increase verbosity", required=False, action="count")
@@ -256,7 +257,12 @@ def add_annotation(node, info_handler, judgment, searchdepth):
 
 def main():
     # Initialize the engine
-    engine = chess.uci.popen_engine("/usr/bin/stockfish")
+    enginepath = args.engine
+    try:
+        engine = chess.uci.popen_engine(enginepath)
+    except FileNotFoundError:
+        logger.critical("Engine '{}' was not found. Maybe it's not in your $PATH?".format(args.engine))
+        sys.exit(1)
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
