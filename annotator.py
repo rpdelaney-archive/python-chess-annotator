@@ -48,11 +48,6 @@ if args.verbose:
         # INFO TO STDERR
         logger.setLevel(logging.INFO)
 
-# Check that the input file is readable
-if not args.file or not os.path.exists(args.file):
-    logger.critical("file '{}' does not exist.\n".format(args.file))
-    sys.exit(1)
-
 
 def eval_numeric(info_handler):
     """
