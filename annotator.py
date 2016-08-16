@@ -20,16 +20,36 @@ import chess.pgn
 import sys
 import os
 import argparse
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", help="input file", required=True)
 parser.add_argument("--depth", "-d", help="search depth", required=False)
+parser.add_argument("--verbose", "-v", help="increase verbosity", required=False, action="count")
 
 args = parser.parse_args()
 
+# Initiate Logging Module
+logger = logging.getLogger(__name__)
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    logger.addHandler(ch)
+    logger.setLevel(logging.INFO)
+
+if args.verbose >= 3:
+    # EVERYTHING TO LOG FILE
+    # fill this in later
+    logger.setLevel(logging.DEBUG)
+elif args.verbose == 2:
+    # DEBUG TO STDERR
+    logger.setLevel(logging.DEBUG)
+elif args.verbose == 1:
+    # INFO TO STDERR
+    logger.setLevel(logging.INFO)
+
 # Check that the input file is readable
 if not args.file or not os.path.exists(args.file):
-    sys.stderr.write("file '{}' does not exist.\n".format(args.file))
+    logger.critical("file '{}' does not exist.\n".format(args.file))
     sys.exit(1)
 
 
@@ -251,7 +271,7 @@ def main():
         with open(pgnfile) as pgn:
             game = chess.pgn.read_game(pgn)
     except PermissionError:
-        print("Input file not readable.")
+        logger.critical("Input file not readable.")
         sys.exit(1)
 
     # Advance to the end of the game
@@ -272,9 +292,9 @@ def main():
         prev_node = node.parent
 
         # Print some debugging info
-        print(node.board())
-        print(node.board().fen())
-        print("Played move: ", prev_node.board().san(node.move))
+        logger.info(node.board())
+        logger.info(node.board().fen())
+        logger.info("Played move: {}".format(prev_node.board().san(node.move)))
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
@@ -283,17 +303,16 @@ def main():
             add_annotation(node, info_handler, judgment, depth)
 
         # Print some debugging info
-        print("Best move: ",      prev_node.board().san(judgment["bestmove"]))
-        print("Best eval: ",      str(judgment["besteval"]))
-        print("Best comment: ",   str(judgment["bestcomment"]))
-        print("PV: ",             prev_node.board().variation_san(judgment["pv"]))
-        print("Played eval: ",    str(judgment["playedeval"]))
-        print("Played comment: ", str(judgment["playedcomment"]))
-        print("Delta: ",          str(judgment["playedeval"] - judgment["besteval"]))
-        print("")
+        logger.debug("Best move: {}".      format(prev_node.board().san(judgment["bestmove"])))
+        logger.debug("Best eval: {}".      format(str(judgment["besteval"])))
+        logger.debug("Best comment: {}".   format(str(judgment["bestcomment"])))
+        logger.debug("PV: {}".             format(prev_node.board().variation_san(judgment["pv"])))
+        logger.debug("Played eval: {}".    format(str(judgment["playedeval"])))
+        logger.debug("Played comment: {}". format(str(judgment["playedcomment"])))
+        logger.debug("Delta: {}".          format(str(judgment["playedeval"] - judgment["besteval"])))
+        logger.info("")
 
         node = prev_node
-
 
     node.comment = engine.name + " Depth: " + str(depth)
 
