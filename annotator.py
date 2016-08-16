@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
-    logger.setLevel(logging.INFO)
 
 if args.verbose >= 3:
     # EVERYTHING TO LOG FILE
