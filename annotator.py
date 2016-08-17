@@ -22,6 +22,7 @@ import sys
 import os
 import argparse
 import logging
+import json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
