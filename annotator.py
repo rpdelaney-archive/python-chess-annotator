@@ -6,12 +6,6 @@
 Reads a chess game in PGN format (https://en.wikipedia.org/wiki/Portable_Game_Notation)
 Uses an engine (stockfish) to evaluate the quality of play and add annotations (https://github.com/official-stockfish/Stockfish)
 Prints PGN data with the added annotations
-
-TODO:
-  Don't truncate a PV that ends in mate
-  Try to cut down on the "magic numbers" somehow (dictionary?)
-  Time-based analysis limits: instead of specifying a searchdepth, give a time limit on how long to spend analyzing the game
-  Don't annotate positions where one side has an overwhelming advantage: build extra logic into needs_annotation()
 """
 
 import chess
