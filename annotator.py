@@ -270,6 +270,11 @@ def main():
     # Advance to the end of the game
     node = game.end()
 
+    # Try to verify that the PGN file was readable
+    if node.parent is None:
+        logger.critical("Could not render the board. Is the file legal PGN?")
+        sys.exit(1)
+
     # Analyze the final position
     if node.board().is_game_over():
         node.comment = var_end_comment(node, "")
