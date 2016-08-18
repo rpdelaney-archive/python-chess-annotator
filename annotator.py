@@ -261,6 +261,48 @@ def add_annotation(node, info_handler, judgment, searchdepth):
     node.nags = get_nags(judgment)
 
 
+def classify_opening(fen, db):
+    """
+    Searches a JSON file with Encyclopedia of Chess Openings (ECO) data to
+    check if the given FEN matches an existing opening record
+
+    Returns a classification
+
+    A classfication is a dictionary containing the following elements:
+        "code":         The ECO code of the matched opening
+        "desc":         The long description of the matched opening
+        "path":         The main variation of the opening
+    """
+    classification = {}
+    classification["code"] = ""
+    classification["desc"] = ""
+    classification["path"] = ""
+
+    for opening in db:
+        if opening['f'] == fen:
+            classification["code"] = opening['c']
+            classification["desc"] = opening['n']
+            classification["path"] = opening['m']
+
+    return classification
+
+
+def eco_fen(node):
+    """
+    Takes a board position and returns a FEN string formatted for matching with eco.json
+    """
+    board_fen = node.board().board_fen()
+    castling_fen = node.board().castling_xfen()
+
+    if node.board().turn: # If white to move
+        to_move = 'w'
+    else:
+        to_move = 'b'
+
+    fen = board_fen + " " + to_move + " " + castling_fen
+    return fen
+
+
 def main():
     # Initialize the engine
     enginepath = args.engine
@@ -284,9 +326,32 @@ def main():
         logger.critical("Input file not readable.")
         sys.exit(1)
 
-    # Advance to the end of the game
-    node = game.end()
+    # Start keeping track of the root node
+    # This will change if we successfully classify the opening
+    root_node = game.end()
+    node = root_node
 
+    # Attempt to classify the opening
+    ecodata = json.load(open('eco/eco.json', 'r'))
+    while not node == game.root():
+        prev_node = node.parent
+
+        fen = eco_fen(node)
+        classification = classify_opening(fen, ecodata)
+
+        if classification["code"] != "":
+            # Add some comments classifying the opening
+            node.root().headers["ECO"] = classification["code"]
+            node.root().headers["Opening"] = classification["desc"]
+            node.comment = classification["code"] + " " + classification["desc"]
+            # Remember this position so we don't analyze the moves preceding it later
+            root_node = node
+            # Break (don't classify previous positions)
+            break
+
+        node = prev_node
+
+    node = game.end()
     # Analyze the final position
     if node.board().is_game_over():
         node.comment = var_end_comment(node, "")
@@ -297,7 +362,7 @@ def main():
 
     # We start at the end of the game and go backward so that the engine can
     # make use of its cache when evaluating positions
-    while not node == game.root():
+    while not node == root_node:
         # Remember where we are
         prev_node = node.parent
 
@@ -324,10 +389,10 @@ def main():
 
         node = prev_node
 
-    node.comment = engine.name + " Depth: " + str(depth)
+    node.root().comment = engine.name + " Depth: " + str(depth)
 
     # Print out the PGN with all the annotations we've added
-    print(node)
+    print(node.root())
 
 if __name__ == "__main__":
     main()
