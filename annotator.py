@@ -6,13 +6,6 @@
 Reads a chess game in PGN format (https://en.wikipedia.org/wiki/Portable_Game_Notation)
 Uses an engine (stockfish) to evaluate the quality of play and add annotations (https://github.com/official-stockfish/Stockfish)
 Prints PGN data with the added annotations
-
-TODO:
-  Classify the openings and don't analyze positions before a classification
-  Don't truncate a PV that ends in mate
-  Try to cut down on the "magic numbers" somehow (dictionary?)
-  Time-based analysis limits: instead of specifying a searchdepth, give a time limit on how long to spend analyzing the game
-  Don't annotate positions where one side has an overwhelming advantage: build extra logic into needs_annotation()
 """
 
 import chess
@@ -311,6 +304,10 @@ def main():
     except FileNotFoundError:
         logger.critical("Engine '{}' was not found. Maybe it's not in your $PATH?".format(args.engine))
         sys.exit(1)
+    except PermissionError:
+        logger.critical("Engine '{}' could not be executed. Try checking the permissions.".format(args.engine))
+        sys.exit(1)
+
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
@@ -330,6 +327,11 @@ def main():
     # This will change if we successfully classify the opening
     root_node = game.end()
     node = root_node
+
+    # Try to verify that the PGN file was readable
+    if node.parent is None:
+        logger.critical("Could not render the board. Is the file legal PGN?")
+        sys.exit(1)
 
     # Attempt to classify the opening
     ecodata = json.load(open('eco/eco.json', 'r'))
@@ -352,6 +354,7 @@ def main():
         node = prev_node
 
     node = game.end()
+
     # Analyze the final position
     if node.board().is_game_over():
         node.comment = var_end_comment(node, "")
