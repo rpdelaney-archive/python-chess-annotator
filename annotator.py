@@ -252,6 +252,10 @@ def main():
     except FileNotFoundError:
         logger.critical("Engine '{}' was not found. Maybe it's not in your $PATH?".format(args.engine))
         sys.exit(1)
+    except PermissionError:
+        logger.critical("Engine '{}' could not be executed. Try checking the permissions.".format(args.engine))
+        sys.exit(1)
+
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
