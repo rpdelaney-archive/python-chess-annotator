@@ -8,20 +8,19 @@ Uses an engine (stockfish) to evaluate the quality of play and add annotations (
 Prints PGN data with the added annotations
 """
 
-import chess
-import chess.uci
-import chess.pgn
-import sys
-import os
 import argparse
-import logging
+import chess
+import chess.pgn
+import chess.uci
 import json
+import logging
+import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
 parser.add_argument("--file", "-f", help="input file", required=True)
-parser.add_argument("--depth", "-d", help="search depth", required=False, default="14")
-parser.add_argument("--verbose", "-v", help="increase verbosity", required=False, action="count")
+parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
+parser.add_argument("--depth", "-d", help="search depth", default="14")
+parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
 args = parser.parse_args()
 
