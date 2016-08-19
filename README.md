@@ -6,9 +6,10 @@ The result will be printed on standard output (the file on disk will be
 unchanged).
 
 ##Dependencies
-You will need a UCI analysis engine. stockfish[[1]] is the default.
+You will need a UCI[[1]] chess engine for analysis. stockfish[[2]] is the
+default.
 
-Requires python-chess by Niklas Fiekas:[[2]]
+Requires python-chess by Niklas Fiekas:[[3]]
 ```
 pip install python-chess
 ```
@@ -42,6 +43,7 @@ option) any later version.
 You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-[1]: https://stockfishchess.org/download/
-[2]: https://github.com/niklasf/python-chess
+[1]: https://chessprogramming.wikispaces.com/UCI
+[2]: https://stockfishchess.org/download/
+[3]: https://github.com/niklasf/python-chess
 <!-- vim: ft=markdown -->
