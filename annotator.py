@@ -2,10 +2,13 @@
 
 """
 © Copyright 2016 Ryan Delaney. All rights reserved.
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
 
-Reads a chess game in PGN format (https://en.wikipedia.org/wiki/Portable_Game_Notation)
-Uses an engine (stockfish) to evaluate the quality of play and add annotations (https://github.com/official-stockfish/Stockfish)
-Prints PGN data with the added annotations
+You should have received a copy of the GNU General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import argparse
