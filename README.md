@@ -1,6 +1,6 @@
 #python-chess-annotator
 
-Takes a PGN files as an argument and annotates the first game in that file
+Takes a PGN file as an argument and annotates the first game in that file
 using an engine.
 
 The result will be printed on standard output (the file on disk will be
