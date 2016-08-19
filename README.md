@@ -15,7 +15,7 @@ optional arguments:
   -h, --help					show the help message and exit
   --file FILE, -f FILE			input PGN file
   --engine ENGINE, -e ENGINE	analysis engine (default: stockfish)
-  --depth DEPTH, -d DEPTH		search depth
+  --depth DEPTH, -d DEPTH		search depth (default: 14)
   --verbose, -v					increase verbosity (print debugging info)
 ```
 
