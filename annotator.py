@@ -399,4 +399,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# vim: ft=python:
+# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4:
