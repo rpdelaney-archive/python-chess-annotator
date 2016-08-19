@@ -6,9 +6,9 @@ The result will be printed on standard output (the file on disk will be
 unchanged).
 
 ##Dependencies
-You will need a UCI analysis engine. stockfish[1] is the default.
+You will need a UCI analysis engine. stockfish[[1]] is the default.
 
-Requires python-chess[2] by Niklas Fliekas:
+Requires python-chess by Niklas Fiekas:[[2]]
 ```
 pip install python-chess
 ```
