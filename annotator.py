@@ -16,6 +16,7 @@ import json
 import logging
 import sys
 
+# Parameters
 parser = argparse.ArgumentParser()
 parser.add_argument("--file", "-f", help="input PGN file", required=True)
 parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
