@@ -391,7 +391,9 @@ def main():
 
         node = prev_node
 
-    node.root().comment = engine.name + " Depth: " + str(depth)
+    annotator = engine.name + " Depth: " + str(depth)
+    node.root().comment = annotator
+    node.root().headers["Annotator"] = annotator
 
     # Print out the PGN with all the annotations we've added
     print(node.root())
