@@ -26,6 +26,13 @@ optional arguments:
   --verbose, -v					increase verbosity (print debugging info)
 ```
 
+##To-do
+- Time-based analysis limits: instead of specifying a searchdepth, give a time
+  limit on how long to spend analyzing the game
+- Reduce the frequency of annotations in positions where one side has an
+  overwhelming advantage
+- Don't truncate a PV that ends in mate
+
 ##Legal
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
