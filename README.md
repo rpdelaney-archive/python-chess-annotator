@@ -7,6 +7,7 @@ The result will be printed on standard output (the file on disk will be
 unchanged).
 
 ##Usage
+```
 usage: annotator.py [-h] --file FILE [--engine ENGINE] [--depth DEPTH]
                     [--verbose]
 
@@ -16,6 +17,7 @@ optional arguments:
   --engine ENGINE, -e ENGINE	analysis engine (default: stockfish)
   --depth DEPTH, -d DEPTH		search depth
   --verbose, -v					increase verbosity (print debugging info)
+```
 
 #Legal
 This program is free software: you can redistribute it and/or modify it
