@@ -47,15 +47,6 @@ if args.verbose:
         logger.setLevel(logging.INFO)
 
 
-def classify_eco(fen):
-    """
-    Search a json db for a given fen, and return an opening classification if
-    it matches
-    Otherwise, return false
-    """
-    return False
-
-
 def eval_numeric(info_handler):
     """
     Returns a numeric evaluation of the position, even if depth-to-mate was
@@ -210,15 +201,17 @@ def var_end_comment(node, score):
     Return a human-readable annotation explaining the board state (if the game
     is over) or a numerical evaluation (if it is not)
     """
-    if node.board().is_stalemate():
+    board = node.board()
+
+    if board.is_stalemate():
         return "Stalemate"
-    elif node.board().is_insufficient_material():
+    elif board.is_insufficient_material():
         return "Insufficient material to mate"
-    elif node.board().can_claim_fifty_moves():
+    elif board.can_claim_fifty_moves():
         return "Fifty move rule"
-    elif node.board().can_claim_threefold_repetition():
+    elif board.can_claim_threefold_repetition():
         return "Three-fold repetition"
-    elif node.board().is_checkmate():
+    elif board.is_checkmate():
         # checkmate speaks for itself
         return ""
     else:
