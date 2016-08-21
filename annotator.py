@@ -378,12 +378,12 @@ def main():
 
         # Print some debugging info
         logger.debug("Best move: {}".      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: {}".      format(str(judgment["besteval"])))
-        logger.debug("Best comment: {}".   format(str(judgment["bestcomment"])))
+        logger.debug("Best eval: {}".      format(judgment["besteval"]))
+        logger.debug("Best comment: {}".   format(judgment["bestcomment"]))
         logger.debug("PV: {}".             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: {}".    format(str(judgment["playedeval"])))
-        logger.debug("Played comment: {}". format(str(judgment["playedcomment"])))
-        logger.debug("Delta: {}".          format(str(judgment["playedeval"] - judgment["besteval"])))
+        logger.debug("Played eval: {}".    format(judgment["playedeval"]))
+        logger.debug("Played comment: {}". format(judgment["playedcomment"]))
+        logger.debug("Delta: {}".          format(judgment["playedeval"] - judgment["besteval"]))
         logger.info("")
 
         node = prev_node
