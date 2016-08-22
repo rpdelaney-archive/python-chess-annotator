@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
 
 """
 © Copyright 2016 Ryan Delaney. All rights reserved.
@@ -399,4 +400,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4:
+# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
