@@ -1,1 +1,5 @@
-*.pgn
+*
+!annotator.py
+!eco/
+!README.md
+!LICENSE
