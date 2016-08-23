@@ -255,7 +255,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
     node.nags = get_nags(judgment)
 
 
-def classify_opening(fen, db):
+def classify_opening(fen, ecodb):
     """
     Searches a JSON file with Encyclopedia of Chess Openings (ECO) data to
     check if the given FEN matches an existing opening record
@@ -272,7 +272,7 @@ def classify_opening(fen, db):
     classification["desc"] = ""
     classification["path"] = ""
 
-    for opening in db:
+    for opening in ecodb:
         if opening['f'] == fen:
             classification["code"] = opening['c']
             classification["desc"] = opening['n']
@@ -300,6 +300,7 @@ def eco_fen(node):
 def main():
     args = parse_args()
     setup_logging(args)
+
     # Initialize the engine
     enginepath = args.engine
     try:
