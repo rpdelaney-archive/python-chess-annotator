@@ -368,7 +368,7 @@ def main():
         # Print some debugging info
         logger.info(node.board())
         logger.info(node.board().fen())
-        logger.info("Played move: {}".format(prev_node.board().san(node.move)))
+        logger.info("Played move: %s", format(prev_node.board().san(node.move)))
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
@@ -377,13 +377,13 @@ def main():
             add_annotation(node, info_handler, judgment, depth)
 
         # Print some debugging info
-        logger.debug("Best move: {}".      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: {}".      format(judgment["besteval"]))
-        logger.debug("Best comment: {}".   format(judgment["bestcomment"]))
-        logger.debug("PV: {}".             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: {}".    format(judgment["playedeval"]))
-        logger.debug("Played comment: {}". format(judgment["playedcomment"]))
-        logger.debug("Delta: {}".          format(judgment["playedeval"] - judgment["besteval"]))
+        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
+        logger.debug("Best eval: %s",      format(judgment["besteval"]))
+        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
+        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
+        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
+        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+        logger.debug("Delta: %s",          format(judgment["playedeval"] - judgment["besteval"]))
         logger.info("")
 
         node = prev_node
