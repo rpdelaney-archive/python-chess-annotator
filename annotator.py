@@ -1,4 +1,4 @@
-#!  usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
 """
@@ -127,26 +127,7 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
            "bestcomment":   A plain-text comment appropriate for annotating the best move
            "pv":            The engine's primary variation including the best move
            "playedeval":    A numeric evaluation of the played move
-           "playedcoimport unittest
-
-class TestStringMethods(unittest.TestCase):
-
-  def test_upper(self):
-      self.assertEqual('foo'.upper(), 'FOO')
-
-  def test_isupper(self):
-      self.assertTrue('FOO'.isupper())
-      self.assertFalse('Foo'.isupper())
-
-  def test_split(self):
-      s = 'hello world'
-      self.assertEqual(s.split(), ['hello', 'world'])
-      # check that s.split fails when the separator is not a string
-      with self.assertRaises(TypeError):
-          s.split(2)
-
-if __name__ == '__main__':
-    unittest.main()mment": A plain-text comment appropriate for annotating the played move
+           "playedcomment": A plain-text comment appropriate for annotating the played move
     """
 
     judgment = {}
