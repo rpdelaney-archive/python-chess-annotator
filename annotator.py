@@ -29,6 +29,9 @@ if not logger.handlers:
 
 # Parameters
 def parse_args():
+    """
+    Define an argument parser and return the parsed arguments
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", "-f", help="input PGN file", required=True)
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
@@ -39,6 +42,9 @@ def parse_args():
 
 
 def setup_logging(args):
+    """
+    Sets logging module verbosity according to runtime arguments
+    """
     if args.verbose:
         if args.verbose >= 3:
             # EVERYTHING TO LOG FILE
