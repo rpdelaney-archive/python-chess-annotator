@@ -18,16 +18,8 @@ import chess.pgn
 import chess.uci
 import json
 import logging
+
 import sys
-
-# Parameters
-parser = argparse.ArgumentParser()
-parser.add_argument("--file", "-f", help="input PGN file", required=True)
-parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
-parser.add_argument("--depth", "-d", help="search depth", default="14")
-parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
-
-args = parser.parse_args()
 
 # Initiate Logging Module
 logger = logging.getLogger(__name__)
@@ -35,17 +27,29 @@ if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
-if args.verbose:
-    if args.verbose >= 3:
-        # EVERYTHING TO LOG FILE
-        # fill this in later
-        logger.setLevel(logging.DEBUG)
-    elif args.verbose == 2:
-        # DEBUG TO STDERR
-        logger.setLevel(logging.DEBUG)
-    elif args.verbose == 1:
-        # INFO TO STDERR
-        logger.setLevel(logging.INFO)
+# Parameters
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", "-f", help="input PGN file", required=True)
+    parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
+    parser.add_argument("--depth", "-d", help="search depth", default="14")
+    parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
+
+    return parser.parse_args()
+
+
+def setup_logging(args):
+    if args.verbose:
+        if args.verbose >= 3:
+            # EVERYTHING TO LOG FILE
+            # fill this in later
+            logger.setLevel(logging.DEBUG)
+        elif args.verbose == 2:
+            # DEBUG TO STDERR
+            logger.setLevel(logging.DEBUG)
+        elif args.verbose == 1:
+            # INFO TO STDERR
+            logger.setLevel(logging.INFO)
 
 
 def eval_numeric(info_handler):
@@ -294,6 +298,8 @@ def eco_fen(node):
 
 
 def main():
+    args = parse_args()
+    setup_logging(args)
     # Initialize the engine
     enginepath = args.engine
     try:
