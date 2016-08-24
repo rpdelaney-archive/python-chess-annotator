@@ -304,6 +304,16 @@ def eco_fen(node):
 
 
 def main():
+    """
+    Main function
+
+    - Initialize and handle the UCI analysis engine
+    - Attempt to classify the opening with ECO and identify the root node
+        * The root node is the position immediately after the ECO classification
+        * This allows us to skip analysis of moves that have an ECO classification
+    - Analyze the game, adding annotations where appropriate
+    - Print the game with the annotations
+    """
     args = parse_args()
     setup_logging(args)
 
