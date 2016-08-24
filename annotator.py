@@ -12,14 +12,14 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import sys
 import argparse
+import json
+import logging
 import chess
 import chess.pgn
 import chess.uci
-import json
-import logging
 
-import sys
 
 # Initiate Logging Module
 logger = logging.getLogger(__name__)
