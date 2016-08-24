@@ -12,13 +12,13 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import sys
 import argparse
+import json
+import logging
 import chess
 import chess.pgn
 import chess.uci
-import json
-import logging
-import sys
 
 # Parameters
 parser = argparse.ArgumentParser()
@@ -28,25 +28,41 @@ parser.add_argument("--time", "-t", help="time to spend analyzing a game in minu
 parser.add_argument("--depth", "-d", help="search depth", default="14")
 parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
-args = parser.parse_args()
-
 # Initiate Logging Module
 logger = logging.getLogger(__name__)
 if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
-if args.verbose:
-    if args.verbose >= 3:
-        # EVERYTHING TO LOG FILE
-        # fill this in later
-        logger.setLevel(logging.DEBUG)
-    elif args.verbose == 2:
-        # DEBUG TO STDERR
-        logger.setLevel(logging.DEBUG)
-    elif args.verbose == 1:
-        # INFO TO STDERR
-        logger.setLevel(logging.INFO)
+# Parameters
+def parse_args():
+    """
+    Define an argument parser and return the parsed arguments
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", "-f", help="input PGN file", required=True)
+    parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
+    parser.add_argument("--depth", "-d", help="search depth", default="14")
+    parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
+
+    return parser.parse_args()
+
+
+def setup_logging(args):
+    """
+    Sets logging module verbosity according to runtime arguments
+    """
+    if args.verbose:
+        if args.verbose >= 3:
+            # EVERYTHING TO LOG FILE
+            # fill this in later
+            logger.setLevel(logging.DEBUG)
+        elif args.verbose == 2:
+            # DEBUG TO STDERR
+            logger.setLevel(logging.DEBUG)
+        elif args.verbose == 1:
+            # INFO TO STDERR
+            logger.setLevel(logging.INFO)
 
 
 def eval_numeric(info_handler):
@@ -252,7 +268,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
     node.nags = get_nags(judgment)
 
 
-def classify_opening(fen, db):
+def classify_opening(fen, ecodb):
     """
     Searches a JSON file with Encyclopedia of Chess Openings (ECO) data to
     check if the given FEN matches an existing opening record
@@ -269,7 +285,7 @@ def classify_opening(fen, db):
     classification["desc"] = ""
     classification["path"] = ""
 
-    for opening in db:
+    for opening in ecodb:
         if opening['f'] == fen:
             classification["code"] = opening['c']
             classification["desc"] = opening['n']
@@ -295,6 +311,9 @@ def eco_fen(node):
 
 
 def main():
+    args = parse_args()
+    setup_logging(args)
+
     # Initialize the engine
     enginepath = args.engine
     try:
@@ -370,7 +389,7 @@ def main():
         # Print some debugging info
         logger.info(node.board())
         logger.info(node.board().fen())
-        logger.info("Played move: {}".format(prev_node.board().san(node.move)))
+        logger.info("Played move: %s", format(prev_node.board().san(node.move)))
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
@@ -379,13 +398,13 @@ def main():
             add_annotation(node, info_handler, judgment, depth)
 
         # Print some debugging info
-        logger.debug("Best move: {}".      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: {}".      format(judgment["besteval"]))
-        logger.debug("Best comment: {}".   format(judgment["bestcomment"]))
-        logger.debug("PV: {}".             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: {}".    format(judgment["playedeval"]))
-        logger.debug("Played comment: {}". format(judgment["playedcomment"]))
-        logger.debug("Delta: {}".          format(judgment["playedeval"] - judgment["besteval"]))
+        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
+        logger.debug("Best eval: %s",      format(judgment["besteval"]))
+        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
+        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
+        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
+        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+        logger.debug("Delta: %s",          format(judgment["playedeval"] - judgment["besteval"]))
         logger.info("")
 
         node = prev_node
