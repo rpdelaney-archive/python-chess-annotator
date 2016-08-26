@@ -36,6 +36,7 @@ def parse_args():
     parser.add_argument("--file", "-f", help="input PGN file", required=True)
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
     parser.add_argument("--depth", "-d", help="search depth", default="14")
+    parser.add_argument("--time", "-t", help="minutes to spend on analysis", default="1")
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
@@ -317,7 +318,9 @@ def main():
     args = parse_args()
     setup_logging(args)
 
+    ###########################################################################
     # Initialize the engine
+    ###########################################################################
     enginepath = args.engine
     try:
         engine = chess.uci.popen_engine(enginepath)
@@ -332,9 +335,9 @@ def main():
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
 
-    depth = int(args.depth)
-
+    ###########################################################################
     # Open a PGN file
+    ###########################################################################
     pgnfile = args.file
     try:
         with open(pgnfile) as pgn:
@@ -353,7 +356,9 @@ def main():
         logger.critical("Could not render the board. Is the file legal PGN?")
         sys.exit(1)
 
+    ###########################################################################
     # Attempt to classify the opening
+    ###########################################################################
     ecodata = json.load(open('eco/eco.json', 'r'))
     while not node == game.root():
         prev_node = node.parent
@@ -375,44 +380,30 @@ def main():
 
     node = game.end()
 
-    # Analyze the final position
-    if node.board().is_game_over():
-        node.comment = var_end_comment(node, "")
-    else:
-        judgment = judge_move(node.parent.board(), node.move, engine, info_handler, depth)
-        add_annotation(node, info_handler, judgment, depth)
-    node = node.parent
+    ###########################################################################
+    # Perform game analysis
+    ###########################################################################
 
-    # We start at the end of the game and go backward so that the engine can
-    # make use of its cache when evaluating positions
-    while not node == root_node:
-        # Remember where we are
-        prev_node = node.parent
+    # First pass:
+    #
+    #   - Performs a shallow-depth search to the root node
+    #   - Leaves annotations showing the centipawn loss of each move
+    #
+    # These annotations form the basis of the second pass, which will analyze
+    # those moves that had a high centipawn loss (mistakes)
 
-        # Print some debugging info
-        logger.info(node.board())
-        logger.info(node.board().fen())
-        logger.info("Played move: %s", format(prev_node.board().san(node.move)))
+    # Second pass:
+    #
+    #   - Iterate through the comments looking for moves with high centipawn
+    #   loss
+    #   - Leaves annotations on those moves showing what the player could have
+    #   done instead
+    #
+    # These annotations form the basis of the second pass, which will analyze
+    # those moves that had a high centipawn loss (mistakes)
+    ###########################################################################
 
-        # Get the engine judgment of the played move in this position
-        judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
-
-        if needs_annotation(judgment):
-            add_annotation(node, info_handler, judgment, depth)
-
-        # Print some debugging info
-        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: %s",      format(judgment["besteval"]))
-        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
-        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
-        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
-        logger.debug("Delta: %s",          format(judgment["playedeval"] - judgment["besteval"]))
-        logger.info("")
-
-        node = prev_node
-
-    annotator = engine.name + " Depth: " + str(depth)
+    annotator = engine.name
     node.root().comment = annotator
     node.root().headers["Annotator"] = annotator
 
