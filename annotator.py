@@ -384,6 +384,10 @@ def main():
     # Perform game analysis
     ###########################################################################
 
+    # Calculate how many seconds we have to accomplish this
+    # The parameter is priced in minutes so we convert to seconds
+    budget = int(args.time) * 60
+
     # First pass:
     #
     #   - Performs a shallow-depth search to the root node
