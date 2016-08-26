@@ -357,9 +357,11 @@ def main():
         sys.exit(1)
 
     ###########################################################################
-    # Attempt to classify the opening
+    # Attempt to classify the opening and calculate the game length
     ###########################################################################
     ecodata = json.load(open('eco/eco.json', 'r'))
+    ply_count = 0
+
     while not node == game.root():
         prev_node = node.parent
 
@@ -376,6 +378,7 @@ def main():
             # Break (don't classify previous positions)
             break
 
+        ply_count += 1
         node = prev_node
 
     node = game.end()
