@@ -399,6 +399,10 @@ def main():
     # These annotations form the basis of the second pass, which will analyze
     # those moves that had a high centipawn loss (mistakes)
 
+    # We have a fraction of the total budget to finish the first pass
+    pass1_budget = budget / 10
+    time_per_move = pass1_budget / ply_count
+
     # Second pass:
     #
     #   - Iterate through the comments looking for moves with high centipawn
