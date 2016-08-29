@@ -121,7 +121,7 @@ def needs_annotation(judgment):
     return delta < -50
 
 
-def judge_move(board, played_move, engine, info_handler, searchdepth):
+def judge_move(board, played_move, engine, info_handler, searchtime_s):
     """
      Evaluate the strength of a given move by comparing it to engine's best
      move and evaluation at a given depth, in a given board context
@@ -137,11 +137,14 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
            "playedcomment": A plain-text comment appropriate for annotating the played move
     """
 
+    # Calculate the search time in milliseconds
+    searchtime_ms = searchtime_s * 1000
+
     judgment = {}
 
     # First, get the engine bestmove and evaluation
     engine.position(board)
-    engine.go(depth=searchdepth)
+    engine.go(time=searchtime_ms / 2)
 
     judgment["bestmove"] = engine.bestmove
     judgment["besteval"] = eval_numeric(info_handler)
@@ -162,9 +165,11 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
         # get the engine evaluation of the played move
         board.push(played_move)                             # Put the played move on the board
         engine.position(board)                              # Set the engine position to the board position
-        engine.go(depth=searchdepth)                        # Run a search on the engine position to depth = searchdepth
+        engine.go(time=searchtime_ms / 2)                   # Run a search on the engine position
 
-        judgment["playedeval"] = -eval_numeric(info_handler)  # Store the numeric evaluation. We invert the sign since we're now evaluating from the opponent's perspective
+        # Store the numeric evaluation.
+        # We invert the sign since we're now evaluating from the opponent's perspective
+        judgment["playedeval"] = -eval_numeric(info_handler)
 
         # Take the played move off the stack (reset the board)
         board.pop()
@@ -410,8 +415,6 @@ def main():
     #   - Leaves annotations on those moves showing what the player could have
     #   done instead
     #
-    # These annotations form the basis of the second pass, which will analyze
-    # those moves that had a high centipawn loss (mistakes)
     ###########################################################################
 
     annotator = engine.name
