@@ -111,14 +111,13 @@ def eval_absolute(number, white_to_move):
     return '{:.2f}'.format(number)
 
 
-def needs_annotation(judgment):
+def needs_annotation(delta):
     """
     Returns a boolean indicating whether a node with the given evaluations
     should have an annotation added
     """
-    delta = judgment["playedeval"] - judgment["besteval"]
 
-    return delta < -50
+    return delta > 50
 
 
 def judge_move(board, played_move, engine, info_handler, searchtime_s):
@@ -411,6 +410,9 @@ def main():
     # Loop through the game doing shallow analysis
     logger.info("Performing first pass...")
 
+    # Count the number of mistakes that will have to be annotated later
+    error_count = 0
+
     node = game.end()
     while not node == root_node:
         # Remember where we are
@@ -423,8 +425,9 @@ def main():
         # Record the delta, to be referenced in the second pass
         node.comment = str(delta)
 
-        # Go to the previous node
-        node = prev_node
+        # Count the number of mistakes that will have to be annotated later
+        if needs_annotation(delta):
+            error_count += 1
 
         # Print some debugging info
         logger.debug(node.board())
@@ -439,6 +442,10 @@ def main():
         logger.debug("Delta: %s",          format(delta))
         logger.debug("")
 
+        # Go to the previous node
+        node = prev_node
+
+
     # Second pass:
     #
     #   - Iterate through the comments looking for moves with high centipawn
@@ -446,6 +453,30 @@ def main():
     #   - Leaves annotations on those moves showing what the player could have
     #   done instead
     #
+
+    # We use the rest of the budgeted time to perform the second pass
+    pass2_budget = budget * 9 / 10
+    time_per_move = pass2_budget / error_count
+
+    # Loop through the game doing deep analysis on the flagged moves
+    logger.info("Performing second pass...")
+
+    node = game.end()
+    while not node == root_node:
+        # Remember where we are
+        prev_node = node.parent
+
+        delta = int(node.comment)
+
+        if needs_annotation(delta):
+            # Get the engine judgment of the played move in this position
+            judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+            add_annotation(node, info_handler, judgment, time_per_move)
+        else:
+            node.comment = None
+
+        # Go to the previous node
+        node = prev_node
 
     ###########################################################################
 
