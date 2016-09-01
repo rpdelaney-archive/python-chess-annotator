@@ -234,7 +234,7 @@ def var_end_comment(node, score):
         return score
 
 
-def add_annotation(node, info_handler, judgment, searchdepth):
+def add_annotation(node, judgment):
     """
     Add evaluations and the engine's primary variation as annotations to a node
     """
@@ -245,12 +245,10 @@ def add_annotation(node, info_handler, judgment, searchdepth):
         node.comment = judgment["playedcomment"]
 
     # Add the engine's primary variation (PV) as an annotation
-    # We truncate the PV to one half the search depth because engine variations tend to get silly near the end
     prev_node.add_main_variation(judgment["bestmove"])
     var_node = prev_node.variation(judgment["bestmove"])
-    max_var_length = searchdepth // 2
 
-    for move in judgment["pv"][:max_var_length]:
+    for move in judgment["pv"]:
         if var_node.move != move:
             var_node.add_main_variation(move)
             var_node = var_node.variation(move)
@@ -471,7 +469,7 @@ def main():
         if needs_annotation(delta):
             # Get the engine judgment of the played move in this position
             judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
-            add_annotation(node, info_handler, judgment, time_per_move)
+            add_annotation(node, judgment)
         else:
             node.comment = None
 
