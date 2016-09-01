@@ -163,9 +163,9 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         judgment["playedeval"] = judgment["besteval"]
     else:
         # get the engine evaluation of the played move
-        board.push(played_move)                             # Put the played move on the board
-        engine.position(board)                              # Set the engine position to the board position
-        engine.go(movetime=searchtime_ms / 2)               # Run a search on the engine position
+        board.push(played_move)                # Put the played move on the board
+        engine.position(board)                 # Set the engine position to the board position
+        engine.go(movetime=searchtime_ms / 2)  # Run a search on the engine position
 
         # Store the numeric evaluation.
         # We invert the sign since we're now evaluating from the opponent's perspective
@@ -420,6 +420,12 @@ def main():
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
         delta = judgment["besteval"] - judgment["playedeval"]
 
+        # Record the delta, to be referenced in the second pass
+        node.comment = str(delta)
+
+        # Go to the previous node
+        node = prev_node
+
         # Print some debugging info
         logger.debug(node.board())
         logger.debug(node.board().fen())
@@ -433,10 +439,6 @@ def main():
         logger.debug("Delta: %s",          format(delta))
         logger.debug("")
 
-        node.comment = str(delta)
-
-        node = prev_node
-
     # Second pass:
     #
     #   - Iterate through the comments looking for moves with high centipawn
@@ -444,6 +446,7 @@ def main():
     #   - Leaves annotations on those moves showing what the player could have
     #   done instead
     #
+
     ###########################################################################
 
     annotator = engine.name
