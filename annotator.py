@@ -469,7 +469,13 @@ def main():
         if needs_annotation(delta):
             # Get the engine judgment of the played move in this position
             judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
-            add_annotation(node, judgment)
+
+            # Verify that the engine still dislikes the played move
+            delta = judgment["besteval"] - judgment["playedeval"]
+            if needs_annotation(delta):
+                add_annotation(node, judgment)
+            else:
+                node.comment = None
         else:
             node.comment = None
 
