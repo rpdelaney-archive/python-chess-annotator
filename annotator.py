@@ -144,7 +144,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
 
     # First, get the engine bestmove and evaluation
     engine.position(board)
-    engine.go(time=searchtime_ms / 2)
+    engine.go(movetime=searchtime_ms / 2)
 
     judgment["bestmove"] = engine.bestmove
     judgment["besteval"] = eval_numeric(info_handler)
@@ -165,7 +165,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         # get the engine evaluation of the played move
         board.push(played_move)                             # Put the played move on the board
         engine.position(board)                              # Set the engine position to the board position
-        engine.go(time=searchtime_ms / 2)                   # Run a search on the engine position
+        engine.go(movetime=searchtime_ms / 2)               # Run a search on the engine position
 
         # Store the numeric evaluation.
         # We invert the sign since we're now evaluating from the opponent's perspective
@@ -407,6 +407,35 @@ def main():
     # We have a fraction of the total budget to finish the first pass
     pass1_budget = budget / 10
     time_per_move = pass1_budget / ply_count
+
+    # Loop through the game doing shallow analysis
+    logger.info("Performing first pass...")
+
+    node = game.end()
+    while not node == root_node:
+        # Remember where we are
+        prev_node = node.parent
+
+        # Get the engine judgment of the played move in this position
+        judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+        delta = judgment["besteval"] - judgment["playedeval"]
+
+        # Print some debugging info
+        logger.debug(node.board())
+        logger.debug(node.board().fen())
+        logger.debug("Played move: %s", format(prev_node.board().san(node.move)))
+        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
+        logger.debug("Best eval: %s",      format(judgment["besteval"]))
+        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
+        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
+        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
+        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+        logger.debug("Delta: %s",          format(delta))
+        logger.debug("")
+
+        node.comment = str(delta)
+
+        node = prev_node
 
     # Second pass:
     #
