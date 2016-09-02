@@ -9,7 +9,7 @@ unchanged).
 You will need a UCI[[1]] chess engine for analysis. stockfish[[2]] is the
 default.
 
-Requires python-chess by Niklas Fiekas:[[3]]
+Requires python-chess[[3]] by Niklas Fiekas:
 ```
 pip install python-chess
 ```
@@ -25,7 +25,7 @@ optional arguments:
   --file FILE, -f FILE       input PGN file
   --engine ENGINE, -e ENGINE analysis engine (default: stockfish)
   --time TIME, -t TIME       minutes to spend on analysis (default: 1)
-  --verbose, -v              increase verbosity
+  --verbose, -v              increase verbosity (print debugging info)
 
 $ python annotator.py -f caruana-kasparov.pgn -t 15
 [Event "Ultimate Blitz Challenge"]
