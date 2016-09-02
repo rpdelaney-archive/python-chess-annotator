@@ -453,7 +453,7 @@ def main():
     #
 
     # We use the rest of the budgeted time to perform the second pass
-    pass2_budget = budget * 9 / 10
+    pass2_budget = budget - pass1_budget
     time_per_move = pass2_budget / error_count
 
     # Loop through the game doing deep analysis on the flagged moves
