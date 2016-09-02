@@ -35,7 +35,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file", "-f", help="input PGN file", required=True)
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
-    parser.add_argument("--time", "-t", help="minutes to spend on analysis", default="1")
+    parser.add_argument("--time", "-t", help="minutes to spend on analysis", default="1", type=int)
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
