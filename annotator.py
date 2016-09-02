@@ -454,7 +454,18 @@ def main():
 
     # We use the rest of the budgeted time to perform the second pass
     pass2_budget = budget - pass1_budget
-    time_per_move = pass2_budget / error_count
+    try:
+        time_per_move = pass2_budget / error_count
+    except ZeroDivisionError:
+        logger.info("No errors found on first pass!")
+        # There were no mistakes in the game, so deeply analyze all the moves
+        time_per_move = pass2_budget / ply_count
+        node = game.end()
+        while not node == root_node:
+            prev_node = node.parent
+            # Reset the comments to a value high enough to ensure that they all get analyzed
+            node.comment = '8593'
+            node = prev_node
 
     # Loop through the game doing deep analysis on the flagged moves
     logger.info("Performing second pass...")
