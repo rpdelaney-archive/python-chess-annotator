@@ -23,7 +23,7 @@ optional arguments:
   -h, --help					show the help message and exit
   --file FILE, -f FILE			input PGN file
   --engine ENGINE, -e ENGINE	analysis engine (default: stockfish)
-  --time MINUTES, -t MINUTES	time in minutes to spend analyzing the game
+  --time MINUTES, -t MINUTES	time in minutes to spend analyzing the game (default: 1)
   --verbose, -v					increase verbosity (print debugging info)
 ```
 
