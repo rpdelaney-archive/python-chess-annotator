@@ -86,18 +86,20 @@ def eval_numeric(info_handler):
     return result
 
 
-def eval_human(info_handler):
+def eval_human(board, info_handler, invert):
     """
     Returns a human-readable evaluation of the position:
-        If depth-to-mate was found, return plain-text mate announcement (e.g. "White mates in 4")
+        If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
         If depth-to-mate was not found, return an absolute numeric evaluation
     """
     if info_handler.info["score"][1].mate is not None:
-        return "Mate in ", info_handler.info["score"][1].mate
+        return "Mate in {}".format(abs(info_handler.info["score"][1].mate))
     elif info_handler.info["score"][1].cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        return str(info_handler.info["score"][1].cp / 100)
-
+        if invert:
+            return eval_absolute(info_handler.info["score"][1].cp / -100, board.turn)
+        else:
+            return eval_absolute(info_handler.info["score"][1].cp / 100, board.turn)
 
 def eval_absolute(number, white_to_move):
     """
@@ -151,12 +153,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     judgment["pv"] = info_handler.info["pv"][1]
 
     # Annotate the best move
-    if info_handler.info["score"][1].mate is not None:
-        judgment["bestcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
-    elif info_handler.info["score"][1].cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        comment_score = eval_absolute(info_handler.info["score"][1].cp / 100, board.turn)
-        judgment["bestcomment"] = str(comment_score)
+    judgment["bestcomment"] = eval_human(board, info_handler, False)
 
     # If the played move matches the engine bestmove, we're done
     if played_move == engine.bestmove:
@@ -175,12 +172,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         board.pop()
 
     # Annotate the played move
-    if info_handler.info["score"][1].mate is not None:
-        judgment["playedcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
-    elif info_handler.info["score"][1].cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        comment_score = eval_absolute(info_handler.info["score"][1].cp / -100, board.turn)
-        judgment["playedcomment"] = str(comment_score)
+    judgment["playedcomment"] = eval_human(board, info_handler, True)
 
     return judgment
 
