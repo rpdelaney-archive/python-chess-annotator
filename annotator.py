@@ -244,10 +244,11 @@ def add_annotation(node, judgment):
         node.comment = judgment["playedcomment"]
 
     # Add the engine's primary variation (PV) as an annotation
+    # We truncate the PV to 10 moves because engine variations tend to get silly near the end
     prev_node.add_main_variation(judgment["bestmove"])
     var_node = prev_node.variation(judgment["bestmove"])
 
-    for move in judgment["pv"]:
+    for move in judgment["pv"][:10]:
         if var_node.move != move:
             var_node.add_main_variation(move)
             var_node = var_node.variation(move)
