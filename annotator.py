@@ -66,24 +66,27 @@ def eval_numeric(info_handler):
     found. This facilitates comparing numerical evaluations with depth-to-mate
     evaluations
     """
-    if info_handler.info["score"][1].mate is not None:
+    dtm = info_handler.info["score"][1].mate
+    cp = info_handler.info["score"][1].cp
+
+    if dtm is not None:
         # We have depth-to-mate (dtm), so translate it into a numerical
         # evaluation. This number needs to be just big enough to guarantee that
         # it is always greater than a non-dtm evaluation.
 
         max_score = 10000
-        dtm = info_handler.info["score"][1].mate
 
         if dtm >= 1:
-            result = max_score-dtm
+            return max_score-dtm
         else:
-            result = -(max_score-dtm)
+            return -(max_score-dtm)
 
-    elif info_handler.info["score"][1].cp is not None:
+    elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
-        result = info_handler.info["score"][1].cp
+        return cp
 
-    return result
+    # If we haven't returned yet, then the info_handler had garbage in it
+    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
 
 
 def eval_human(board, info_handler, invert):
@@ -92,14 +95,20 @@ def eval_human(board, info_handler, invert):
         If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
         If depth-to-mate was not found, return an absolute numeric evaluation
     """
-    if info_handler.info["score"][1].mate is not None:
-        return "Mate in {}".format(abs(info_handler.info["score"][1].mate))
-    elif info_handler.info["score"][1].cp is not None:
+    dtm = info_handler.info["score"][1].mate
+    cp = info_handler.info["score"][1].cp
+
+    if dtm is not None:
+        return "Mate in {}".format(abs(dtm))
+    elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
         if invert:
-            return eval_absolute(info_handler.info["score"][1].cp / -100, board.turn)
+            return eval_absolute(cp / -100, board.turn)
         else:
-            return eval_absolute(info_handler.info["score"][1].cp / 100, board.turn)
+            return eval_absolute(cp / 100, board.turn)
+
+    # If we haven't returned yet, then the info_handler had garbage in it
+    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
 
 def eval_absolute(number, white_to_move):
     """
