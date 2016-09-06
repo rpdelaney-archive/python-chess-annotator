@@ -194,16 +194,14 @@ def get_nags(judgment):
 
     delta = judgment["playedeval"] - judgment["besteval"]
 
-    nags = []
-
     if delta < -300:
-        nags = [chess.pgn.NAG_BLUNDER]
+        return [chess.pgn.NAG_BLUNDER]
     elif delta < -150:
-        nags = [chess.pgn.NAG_MISTAKE]
+        return [chess.pgn.NAG_MISTAKE]
     elif delta < -75:
-        nags = [chess.pgn.NAG_DUBIOUS_MOVE]
-
-    return nags
+        return [chess.pgn.NAG_DUBIOUS_MOVE]
+    else:
+        return []
 
 
 def var_end_comment(node, score):
