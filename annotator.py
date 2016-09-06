@@ -203,14 +203,6 @@ def get_nags(judgment):
     elif delta < -75:
         nags = [chess.pgn.NAG_DUBIOUS_MOVE]
 
-    # If the played move retains an overwhelming advantage, then it can't be a mistake or blunder
-    if judgment["playedeval"] > 800:
-        nags = []
-
-    # If the best move still gets an overwhelming disadvantage, then the played move can't be a mistake or a blunder
-    if judgment["besteval"] < -800:
-        nags = []
-
     return nags
 
 
