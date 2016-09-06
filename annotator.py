@@ -361,9 +361,25 @@ def main():
         logger.critical("Could not render the board. Is the file legal PGN?")
         sys.exit(1)
 
+
+    ###########################################################################
+    # Clear existing comments and variations
+    ###########################################################################
+    while not node == game.root():
+        prev_node = node.parent
+
+        node.comment = None
+        for variation in node.variations:
+            if not variation.is_main_variation():
+                node.remove_variation(variation)
+
+        node = prev_node
+
+
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
     ###########################################################################
+    node = root_node
     logger.info("Classifying the opening...")
 
     ecodata = json.load(open('eco/eco.json', 'r'))
