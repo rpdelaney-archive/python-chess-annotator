@@ -221,7 +221,7 @@ def var_end_comment(node, score):
         return "Three-fold repetition"
     elif board.is_checkmate():
         # checkmate speaks for itself
-        return ""
+        return None
     else:
         return score
 
