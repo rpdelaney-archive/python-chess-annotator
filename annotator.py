@@ -364,6 +364,8 @@ def main():
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
     ###########################################################################
+    logger.info("Classifying the opening...")
+
     ecodata = json.load(open('eco/eco.json', 'r'))
     ply_count = 0
 
