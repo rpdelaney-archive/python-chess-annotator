@@ -516,7 +516,12 @@ def main():
     node.root().headers["Annotator"] = annotator
 
     # Print out the PGN with all the annotations we've added
-    print(node.root())
+    try:
+        print(node.root())
+    except:
+        logger.critical("Unexpected error: %s", sys.exc_info()[0])
+        logger.critical("PGN parsing errors were: %s", node.root().errors)
+        raise
 
 if __name__ == "__main__":
     main()
