@@ -33,8 +33,8 @@ def parse_args():
     Define an argument parser and return the parsed arguments
     """
     parser = argparse.ArgumentParser(
-            prog='annotator.py',
-            description='takes a chess game in a PGN file and prints annotations to standard output')
+        prog='annotator.py',
+        description='takes a chess game in a PGN file and prints annotations to standard output')
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
     parser.add_argument("--time", "-t", help="how long to spend on analysis", default="1", type=int, metavar="MINUTES")
@@ -77,9 +77,9 @@ def eval_numeric(info_handler):
         max_score = 10000
 
         if dtm >= 1:
-            return max_score-dtm
+            return max_score - dtm
         else:
-            return -(max_score-dtm)
+            return -(max_score - dtm)
 
     elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
@@ -109,6 +109,7 @@ def eval_human(board, info_handler, invert):
 
     # If we haven't returned yet, then the info_handler had garbage in it
     raise RuntimeError("Evaluation found in the info_handler was unintelligible")
+
 
 def eval_absolute(number, white_to_move):
     """
@@ -290,7 +291,7 @@ def eco_fen(node):
     board_fen = node.board().board_fen()
     castling_fen = node.board().castling_xfen()
 
-    if node.board().turn: # If white to move
+    if node.board().turn:  # If white to move
         to_move = 'w'
     else:
         to_move = 'b'
@@ -351,7 +352,6 @@ def main():
         logger.critical("Could not render the board. Is the file legal PGN?")
         sys.exit(1)
 
-
     ###########################################################################
     # Clear existing comments and variations
     ###########################################################################
@@ -364,7 +364,6 @@ def main():
                 node.remove_variation(variation)
 
         node = prev_node
-
 
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
@@ -456,7 +455,6 @@ def main():
 
         # Go to the previous node
         node = prev_node
-
 
     # Second pass:
     #
