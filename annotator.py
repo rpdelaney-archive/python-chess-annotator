@@ -248,7 +248,7 @@ def add_annotation(node, judgment):
             var_node = var_node.variation(move)
 
     # Add a comment to the end of the variation explaining the game state
-    var_node.comment = judgment["bestcomment"]
+    var_node.comment = var_end_comment(var_node, judgment["bestcomment"])
 
     # We added the variation as the main line, so now it has to be demoted
     # (This is done so that variations can be added to the final node)
