@@ -321,11 +321,13 @@ def main():
     try:
         engine = chess.uci.popen_engine(enginepath)
     except FileNotFoundError:
-        logger.critical("Engine '{}' was not found. Maybe it's not in your $PATH?".format(args.engine))
-        sys.exit(1)
+        errormsg = "Engine '{}' was not found.".format(args.engine)
+        logger.critical(errormsg)
+        raise FileNotFoundError(errormsg)
     except PermissionError:
-        logger.critical("Engine '{}' could not be executed. Try checking the permissions.".format(args.engine))
-        sys.exit(1)
+        errormsg = "Engine '{}' could not be executed.".format(args.engine)
+        logger.critical(errormsg)
+        raise PermissionError(errormsg)
 
     engine.uci()
     info_handler = chess.uci.InfoHandler()
@@ -339,8 +341,9 @@ def main():
         with open(pgnfile) as pgn:
             game = chess.pgn.read_game(pgn)
     except PermissionError:
-        logger.critical("Input file not readable.")
-        sys.exit(1)
+        errormsg = "Input file not readable."
+        logger.critical(errormsg)
+        raise PermissionError(errormsg)
 
     # Start keeping track of the root node
     # This will change if we successfully classify the opening
@@ -349,8 +352,9 @@ def main():
 
     # Try to verify that the PGN file was readable
     if node.parent is None:
-        logger.critical("Could not render the board. Is the file legal PGN?")
-        sys.exit(1)
+        errormsg = "Could not render the board. Is the file legal PGN?"
+        logger.critical(errormsg)
+        raise RuntimeError(errormsg)
 
     ###########################################################################
     # Clear existing comments and variations
