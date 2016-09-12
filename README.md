@@ -24,7 +24,7 @@ optional arguments:
   -h, --help                 show this help message and exit
   --file FILE, -f FILE       input PGN file
   --engine ENGINE, -e ENGINE analysis engine (default: stockfish)
-  --time TIME, -t TIME       minutes to spend on analysis (default: 1)
+  --time MINUTES, -t MINUTES time to spend on analysis (default: 1)
   --verbose, -v              increase verbosity (print debugging info)
 
 $ python annotator.py -f caruana-kasparov.pgn -t 15
