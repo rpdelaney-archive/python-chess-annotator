@@ -323,11 +323,11 @@ def main():
     except FileNotFoundError:
         errormsg = "Engine '{}' was not found.".format(args.engine)
         logger.critical(errormsg)
-        raise FileNotFoundError(errormsg)
+        raise
     except PermissionError:
         errormsg = "Engine '{}' could not be executed.".format(args.engine)
         logger.critical(errormsg)
-        raise PermissionError(errormsg)
+        raise
 
     engine.uci()
     info_handler = chess.uci.InfoHandler()
@@ -341,9 +341,9 @@ def main():
         with open(pgnfile) as pgn:
             game = chess.pgn.read_game(pgn)
     except PermissionError:
-        errormsg = "Input file not readable."
+        errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
-        raise PermissionError(errormsg)
+        raise
 
     # Start keeping track of the root node
     # This will change if we successfully classify the opening
