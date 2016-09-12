@@ -37,7 +37,7 @@ def parse_args():
         description='takes a chess game in a PGN file and prints annotations to standard output')
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
-    parser.add_argument("--time", "-t", help="how long to spend on analysis", default="1", type=int, metavar="MINUTES")
+    parser.add_argument("--time", "-t", help="how long to spend on analysis", default="1", type=float, metavar="MINUTES")
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
@@ -405,7 +405,8 @@ def main():
 
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
-    budget = int(args.time) * 60
+    budget = float(args.time) * 60
+    logger.info("Total budget is {} seconds".format(budget))
 
     # First pass:
     #
@@ -421,6 +422,8 @@ def main():
 
     time_per_move = pass1_budget / ply_count
     assert pass1_budget == time_per_move * ply_count
+
+    logger.info("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
 
     # Loop through the game doing shallow analysis
     logger.info("Performing first pass...")
@@ -471,6 +474,7 @@ def main():
     # We use the rest of the budgeted time to perform the second pass
     pass2_budget = budget - pass1_budget
     assert budget == pass1_budget + pass2_budget
+    logger.info("Pass 2 budget is %i seconds", pass2_budget)
 
     try:
         time_per_move = pass2_budget / error_count
