@@ -321,11 +321,11 @@ def main():
     try:
         engine = chess.uci.popen_engine(enginepath)
     except FileNotFoundError:
-        errormsg = "Engine '{}' was not found.".format(args.engine)
+        errormsg = "Engine '{}' was not found. Aborting...".format(args.engine)
         logger.critical(errormsg)
         raise
     except PermissionError:
-        errormsg = "Engine '{}' could not be executed.".format(args.engine)
+        errormsg = "Engine '{}' could not be executed. Aborting...".format(args.engine)
         logger.critical(errormsg)
         raise
 
@@ -352,7 +352,7 @@ def main():
 
     # Try to verify that the PGN file was readable
     if node.parent is None:
-        errormsg = "Could not render the board. Is the file legal PGN?"
+        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
         logger.critical(errormsg)
         raise RuntimeError(errormsg)
 
