@@ -526,7 +526,7 @@ def main():
         print(node.root())
     except:
         logger.critical("Unexpected error: %s", sys.exc_info()[0])
-        logger.critical("PGN parsing errors were: %s", node.root().errors)
+        logger.critical("PGN parsing errors were: %s", node.end().errors)
         raise
 
 if __name__ == "__main__":
