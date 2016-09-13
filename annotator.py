@@ -406,7 +406,7 @@ def main():
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
     budget = float(args.time) * 60
-    logger.info("Total budget is {} seconds".format(budget))
+    logger.debug("Total budget is {} seconds".format(budget))
 
     # First pass:
     #
@@ -423,7 +423,7 @@ def main():
     time_per_move = pass1_budget / ply_count
     assert pass1_budget == time_per_move * ply_count
 
-    logger.info("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
+    logger.debug("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
 
     # Loop through the game doing shallow analysis
     logger.info("Performing first pass...")
@@ -474,12 +474,12 @@ def main():
     # We use the rest of the budgeted time to perform the second pass
     pass2_budget = budget - pass1_budget
     assert budget == pass1_budget + pass2_budget
-    logger.info("Pass 2 budget is %i seconds", pass2_budget)
+    logger.debug("Pass 2 budget is %i seconds", pass2_budget)
 
     try:
         time_per_move = pass2_budget / error_count
     except ZeroDivisionError:
-        logger.info("No errors found on first pass!")
+        logger.debug("No errors found on first pass!")
         # There were no mistakes in the game, so deeply analyze all the moves
         time_per_move = pass2_budget / ply_count
         node = game.end()
