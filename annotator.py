@@ -300,6 +300,24 @@ def eco_fen(node):
     return fen
 
 
+def debug_print(node, judgment):
+    """
+    Prints some debugging info about a position that was just analyzed
+    """
+
+    logger.debug(node.board())
+    logger.debug(node.board().fen())
+    logger.debug("Played move: %s", format(node.parent.board().san(node.move)))
+    logger.debug("Best move: %s", format(node.parent.board().san(judgment["bestmove"])))
+    logger.debug("Best eval: %s", format(judgment["besteval"]))
+    logger.debug("Best comment: %s", format(judgment["bestcomment"]))
+    logger.debug("PV: %s", format(node.parent.board().variation_san(judgment["pv"])))
+    logger.debug("Played eval: %s", format(judgment["playedeval"]))
+    logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+    logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
+    logger.debug("")
+
+
 def main():
     """
     Main function
@@ -448,17 +466,7 @@ def main():
             error_count += 1
 
         # Print some debugging info
-        logger.debug(node.board())
-        logger.debug(node.board().fen())
-        logger.debug("Played move: %s", format(prev_node.board().san(node.move)))
-        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: %s",      format(judgment["besteval"]))
-        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
-        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
-        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
-        logger.debug("Delta: %s",          format(delta))
-        logger.debug("")
+        debug_print(node, judgment)
 
         # Go to the previous node
         node = prev_node
@@ -510,17 +518,8 @@ def main():
             else:
                 node.comment = None
 
-            logger.debug(node.board())
-            logger.debug(node.board().fen())
-            logger.debug("Played move: %s", format(prev_node.board().san(node.move)))
-            logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
-            logger.debug("Best eval: %s",      format(judgment["besteval"]))
-            logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
-            logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
-            logger.debug("Played eval: %s",    format(judgment["playedeval"]))
-            logger.debug("Played comment: %s", format(judgment["playedcomment"]))
-            logger.debug("Delta: %s",          format(delta))
-            logger.debug("")
+            # Print some debugging info
+            debug_print(node, judgment)
         else:
             node.comment = None
 
