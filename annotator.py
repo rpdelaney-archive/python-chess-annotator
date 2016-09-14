@@ -509,6 +509,18 @@ def main():
                 add_annotation(node, judgment)
             else:
                 node.comment = None
+
+            logger.debug(node.board())
+            logger.debug(node.board().fen())
+            logger.debug("Played move: %s", format(prev_node.board().san(node.move)))
+            logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
+            logger.debug("Best eval: %s",      format(judgment["besteval"]))
+            logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
+            logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
+            logger.debug("Played eval: %s",    format(judgment["playedeval"]))
+            logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+            logger.debug("Delta: %s",          format(delta))
+            logger.debug("")
         else:
             node.comment = None
 
