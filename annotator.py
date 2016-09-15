@@ -339,11 +339,11 @@ def main():
     try:
         engine = chess.uci.popen_engine(enginepath)
     except FileNotFoundError:
-        errormsg = "Engine '{}' was not found. Aborting...".format(args.engine)
+        errormsg = "Engine '{}' was not found. Aborting...".format(enginepath)
         logger.critical(errormsg)
         raise
     except PermissionError:
-        errormsg = "Engine '{}' could not be executed. Aborting...".format(args.engine)
+        errormsg = "Engine '{}' could not be executed. Aborting...".format(enginepath)
         logger.critical(errormsg)
         raise
 
