@@ -224,7 +224,7 @@ def var_end_comment(node, score):
         # checkmate speaks for itself
         return None
     else:
-        return score
+        return str(score)
 
 
 def add_annotation(node, judgment):
