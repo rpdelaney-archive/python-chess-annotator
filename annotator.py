@@ -372,16 +372,16 @@ def main():
         logger.critical("Aborting...")
         sys.exit(1)
 
-    # Start keeping track of the root node
-    # This will change if we successfully classify the opening
-    root_node = game.end()
-    node = root_node
-
-    # Try to verify that the PGN file was readable
+    # Another check to verify that the PGN file was readable
     if node.parent is None:
         errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
         logger.critical(errormsg)
         raise RuntimeError(errormsg)
+
+    # Start keeping track of the root node
+    # This will change if we successfully classify the opening
+    root_node = game.end()
+    node = root_node
 
     ###########################################################################
     # Clear existing comments and variations
