@@ -445,10 +445,8 @@ def main():
 
     # We have a fraction of the total budget to finish the first pass
     pass1_budget = budget / 10
-    assert pass1_budget * 10 == budget
 
-    time_per_move = pass1_budget / ply_count
-    assert pass1_budget == time_per_move * ply_count
+    time_per_move = float(pass1_budget) / float(ply_count)
 
     logger.debug("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
 
@@ -490,7 +488,6 @@ def main():
 
     # We use the rest of the budgeted time to perform the second pass
     pass2_budget = budget - pass1_budget
-    assert budget == pass1_budget + pass2_budget
     logger.debug("Pass 2 budget is %i seconds", pass2_budget)
 
     try:
