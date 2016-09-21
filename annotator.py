@@ -368,7 +368,7 @@ def main():
     if game.errors:
         logger.critical("There were errors parsing the PGN game:")
         for error in game.errors:
-            print(error)
+            logger.critical(error)
         logger.critical("Aborting...")
         sys.exit(1)
 
