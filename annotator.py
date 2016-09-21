@@ -363,6 +363,15 @@ def main():
         logger.critical(errormsg)
         raise
 
+    # Check for PGN parsing errors and abort if any were found
+    # This prevents us from burning up CPU time on nonsense positions
+    if game.errors:
+        logger.critical("There were errors parsing the PGN game:")
+        for error in game.errors:
+            print(error)
+        logger.critical("Aborting...")
+        sys.exit(1)
+
     # Start keeping track of the root node
     # This will change if we successfully classify the opening
     root_node = game.end()
