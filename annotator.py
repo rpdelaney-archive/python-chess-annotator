@@ -318,6 +318,30 @@ def debug_print(node, judgment):
     logger.debug("")
 
 
+def cpl(string):
+    """
+    Centipawn Loss
+    Takes a string and returns an integer representing centipawn loss of the move
+    We put a ceiling on this value so that big blunders don't skew the acpl too much
+    """
+
+    cpl = int(string)
+    max_cpl = 2000
+
+    if cpl > max_cpl:
+        return max_cpl
+    else:
+        return cpl
+
+
+def acpl(cpl_list):
+    """
+    Average Centipawn Loss
+    Takes a list of integers and returns an average of the list contents
+    """
+    return round(sum(cpl_list) / float(len(cpl_list)), 2)
+
+
 def main():
     """
     Main function
@@ -477,6 +501,24 @@ def main():
 
         # Go to the previous node
         node = prev_node
+
+    # Calculate the average centipawn loss (ACPL) for each player
+    white_cpl = []
+    black_cpl = []
+
+    node = game.end()
+    while not node == root_node:
+        prev_node = node.parent
+
+        if node.board().turn:
+            white_cpl.append(cpl(node.comment))
+        else:
+            black_cpl.append(cpl(node.comment))
+
+        node = prev_node
+
+    node.root().headers["White ACPL"] = acpl(white_cpl)
+    node.root().headers["Black ACPL"] = acpl(black_cpl)
 
     # Second pass:
     #
