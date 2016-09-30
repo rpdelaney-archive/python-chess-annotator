@@ -511,9 +511,9 @@ def main():
         prev_node = node.parent
 
         if node.board().turn:
-            white_cpl.append(cpl(node.comment))
-        else:
             black_cpl.append(cpl(node.comment))
+        else:
+            white_cpl.append(cpl(node.comment))
 
         node = prev_node
 
