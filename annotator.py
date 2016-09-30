@@ -326,7 +326,7 @@ def cpl(string):
     """
 
     cpl = int(string)
-    max_cpl = 2000
+    max_cpl = 1000
 
     if cpl > max_cpl:
         return max_cpl
