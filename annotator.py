@@ -328,10 +328,7 @@ def cpl(string):
     cpl = int(string)
     max_cpl = 1000
 
-    if cpl > max_cpl:
-        return max_cpl
-    else:
-        return cpl
+    return min(cpl, max_cpl)
 
 
 def acpl(cpl_list):
