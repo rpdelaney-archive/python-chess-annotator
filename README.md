@@ -69,6 +69,7 @@ Rxf3+ 0-1
 ```
 
 ##To-do
+- Consider adding a GUI using Gooey[[4]]
 - Reduce the frequency of annotations in positions where one side has an
   overwhelming advantage
 - Don't truncate a PV that ends in mate
@@ -86,4 +87,5 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 [1]: https://chessprogramming.wikispaces.com/UCI
 [2]: https://stockfishchess.org/download/
 [3]: https://github.com/niklasf/python-chess
+[4]: https://github.com/chriskiehl/Gooey
 <!-- vim: ft=markdown -->
