@@ -336,7 +336,7 @@ def acpl(cpl_list):
     Average Centipawn Loss
     Takes a list of integers and returns an average of the list contents
     """
-    return round(sum(cpl_list) / float(len(cpl_list)), 0)
+    return round(sum(cpl_list) / len(cpl_list))
 
 
 def main():
