@@ -28,6 +28,7 @@ if not logger.handlers:
     logger.addHandler(ch)
 
 
+# Parameters
 def parse_args():
     """
     Define an argument parser and return the parsed arguments
@@ -578,9 +579,9 @@ def main():
     node.root().headers["Annotator"] = annotator
 
     # Print out the PGN with all the annotations we've added
-    print(node.root())
+    return(node.root())
 
 if __name__ == "__main__":
-    main()
+    print(main())
 
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
