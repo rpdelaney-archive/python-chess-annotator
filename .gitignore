@@ -1,7 +1,1 @@
-*
-!annotator.py
-!eco/
-!tests/
-!README.md
-!LICENSE
-!tests/test_functions.py
+*.pgn
