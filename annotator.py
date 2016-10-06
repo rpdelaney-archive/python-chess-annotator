@@ -259,7 +259,7 @@ def add_annotation(node, judgment):
     node.nags = get_nags(judgment)
 
 
-def classify_opening(fen, ecodb):
+def classify_fen(fen, ecodb):
     """
     Searches a JSON file with Encyclopedia of Chess Openings (ECO) data to
     check if the given FEN matches an existing opening record
@@ -359,6 +359,59 @@ def clean_game(game):
     return node.root()
 
 
+def classify_opening(game):
+    """
+    Takes a game and adds an ECO code classification for the opening
+    Returns the classified game and root_node, which is the node where the classification was made
+    """
+    ecodata = json.load(open('eco/eco.json', 'r'))
+    ply_count = 0
+
+    node = game.end()
+    root_node = node
+    while not node == game.root():
+        prev_node = node.parent
+
+        fen = eco_fen(node)
+        classification = classify_fen(fen, ecodata)
+
+        if classification["code"] != "":
+            # Add some comments classifying the opening
+            node.root().headers["ECO"] = classification["code"]
+            node.root().headers["Opening"] = classification["desc"]
+            node.comment = classification["code"] + " " + classification["desc"]
+            # Remember this position so we don't analyze the moves preceding it later
+            root_node = node
+            # Break (don't classify previous positions)
+            break
+
+        ply_count += 1
+        node = prev_node
+
+    return node.root(), root_node, ply_count
+
+
+def get_acpl(game, root_node):
+    white_cpl = []
+    black_cpl = []
+
+    node = game.end()
+    while not node == root_node:
+        prev_node = node.parent
+
+        if node.board().turn:
+            black_cpl.append(cpl(node.comment))
+        else:
+            white_cpl.append(cpl(node.comment))
+
+        node = prev_node
+
+    node.root().headers["White ACPL"] = round(acpl(white_cpl))
+    node.root().headers["Black ACPL"] = round(acpl(black_cpl))
+
+    return node.root()
+
+
 def analyze_game(game, arg_time, enginepath):
     """
     Take a PGN game and return a GameNode with engine analysis added
@@ -399,32 +452,9 @@ def analyze_game(game, arg_time, enginepath):
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
     ###########################################################################
-    node = root_node
     logger.info("Classifying the opening...")
 
-    ecodata = json.load(open('eco/eco.json', 'r'))
-    ply_count = 0
-
-    while not node == game.root():
-        prev_node = node.parent
-
-        fen = eco_fen(node)
-        classification = classify_opening(fen, ecodata)
-
-        if classification["code"] != "":
-            # Add some comments classifying the opening
-            node.root().headers["ECO"] = classification["code"]
-            node.root().headers["Opening"] = classification["desc"]
-            node.comment = classification["code"] + " " + classification["desc"]
-            # Remember this position so we don't analyze the moves preceding it later
-            root_node = node
-            # Break (don't classify previous positions)
-            break
-
-        ply_count += 1
-        node = prev_node
-
-    node = game.end()
+    game, root_node, ply_count = classify_opening(game)
 
     ###########################################################################
     # Perform game analysis
@@ -479,22 +509,7 @@ def analyze_game(game, arg_time, enginepath):
         node = prev_node
 
     # Calculate the average centipawn loss (ACPL) for each player
-    white_cpl = []
-    black_cpl = []
-
-    node = game.end()
-    while not node == root_node:
-        prev_node = node.parent
-
-        if node.board().turn:
-            black_cpl.append(cpl(node.comment))
-        else:
-            white_cpl.append(cpl(node.comment))
-
-        node = prev_node
-
-    node.root().headers["White ACPL"] = round(acpl(white_cpl))
-    node.root().headers["Black ACPL"] = round(acpl(black_cpl))
+    game = get_acpl(game, root_node)
 
     # Second pass:
     #
