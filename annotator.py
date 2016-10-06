@@ -27,6 +27,7 @@ if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
+
 # Parameters
 def parse_args():
     parser = argparse.ArgumentParser()
