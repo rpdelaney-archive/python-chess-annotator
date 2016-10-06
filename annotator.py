@@ -340,24 +340,18 @@ def acpl(cpl_list):
     return sum(cpl_list) / len(cpl_list)
 
 
-def main():
+def analyze_game(game, arg_time, enginepath):
     """
-    Main function
-
-    - Initialize and handle the UCI analysis engine
+    Take a PGN game and return a GameNode with engine analysis added
     - Attempt to classify the opening with ECO and identify the root node
         * The root node is the position immediately after the ECO classification
         * This allows us to skip analysis of moves that have an ECO classification
     - Analyze the game, adding annotations where appropriate
-    - Print the game with the annotations
+    - Return the root node with annotations
     """
-    args = parse_args()
-    setup_logging(args)
-
     ###########################################################################
     # Initialize the engine
     ###########################################################################
-    enginepath = args.engine
     try:
         engine = chess.uci.popen_engine(enginepath)
     except FileNotFoundError:
@@ -373,37 +367,10 @@ def main():
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
 
-    ###########################################################################
-    # Open a PGN file
-    ###########################################################################
-    pgnfile = args.file
-    try:
-        with open(pgnfile) as pgn:
-            game = chess.pgn.read_game(pgn)
-    except PermissionError:
-        errormsg = "Input file not readable. Aborting..."
-        logger.critical(errormsg)
-        raise
-
-    # Check for PGN parsing errors and abort if any were found
-    # This prevents us from burning up CPU time on nonsense positions
-    if game.errors:
-        logger.critical("There were errors parsing the PGN game:")
-        for error in game.errors:
-            logger.critical(error)
-        logger.critical("Aborting...")
-        sys.exit(1)
-
     # Start keeping track of the root node
     # This will change if we successfully classify the opening
     root_node = game.end()
     node = root_node
-
-    # Try to verify that the PGN file was readable
-    if node.parent is None:
-        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
-        logger.critical(errormsg)
-        raise RuntimeError(errormsg)
 
     ###########################################################################
     # Clear existing comments and variations
@@ -454,7 +421,7 @@ def main():
 
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
-    budget = float(args.time) * 60
+    budget = float(arg_time) * 60
     logger.debug("Total budget is {} seconds".format(budget))
 
     # First pass:
@@ -578,8 +545,50 @@ def main():
     node.root().comment = annotator
     node.root().headers["Annotator"] = annotator
 
+    return node.root()
+
+
+def main():
+    """
+    Main function
+
+    - Initialize and handle the UCI analysis engine
+    - Print the game with the annotations
+    """
+    args = parse_args()
+    setup_logging(args)
+
+    ###########################################################################
+    # Open a PGN file
+    ###########################################################################
+    pgnfile = args.file
+    try:
+        with open(pgnfile) as pgn:
+            game = chess.pgn.read_game(pgn)
+    except PermissionError:
+        errormsg = "Input file not readable. Aborting..."
+        logger.critical(errormsg)
+        raise
+
+    # Check for PGN parsing errors and abort if any were found
+    # This prevents us from burning up CPU time on nonsense positions
+    if game.errors:
+        logger.critical("There were errors parsing the PGN game:")
+        for error in game.errors:
+            logger.critical(error)
+        logger.critical("Aborting...")
+        sys.exit(1)
+
+    # Try to verify that the PGN file was readable
+    if game.end().parent is None:
+        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
+        logger.critical(errormsg)
+        raise RuntimeError(errormsg)
+
+    analyzed_game = analyze_game(game, args.time, args.engine)
+
     # Print out the PGN with all the annotations we've added
-    return(node.root())
+    return(analyzed_game)
 
 if __name__ == "__main__":
     print(main())
