@@ -350,6 +350,7 @@ def clean_game(game):
         prev_node = node.parent
 
         node.comment = None
+        node.nags = []
         for variation in node.variations:
             if not variation.is_main_variation():
                 node.remove_variation(variation)
