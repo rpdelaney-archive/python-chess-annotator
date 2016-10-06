@@ -340,6 +340,25 @@ def acpl(cpl_list):
     return sum(cpl_list) / len(cpl_list)
 
 
+def clean_game(game):
+    """
+    Takes a game and strips all comments and variations, returning the "cleaned" game
+    """
+    node = game.end()
+
+    while not node == game.root():
+        prev_node = node.parent
+
+        node.comment = None
+        for variation in node.variations:
+            if not variation.is_main_variation():
+                node.remove_variation(variation)
+
+        node = prev_node
+
+    return node.root()
+
+
 def analyze_game(game, arg_time, enginepath):
     """
     Take a PGN game and return a GameNode with engine analysis added
@@ -375,15 +394,7 @@ def analyze_game(game, arg_time, enginepath):
     ###########################################################################
     # Clear existing comments and variations
     ###########################################################################
-    while not node == game.root():
-        prev_node = node.parent
-
-        node.comment = None
-        for variation in node.variations:
-            if not variation.is_main_variation():
-                node.remove_variation(variation)
-
-        node = prev_node
+    game = clean_game(game)
 
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
