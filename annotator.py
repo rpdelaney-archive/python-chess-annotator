@@ -336,7 +336,7 @@ def acpl(cpl_list):
     Average Centipawn Loss
     Takes a list of integers and returns an average of the list contents
     """
-    return round(sum(cpl_list) / len(cpl_list))
+    return sum(cpl_list) / len(cpl_list)
 
 
 def main():
@@ -514,8 +514,8 @@ def main():
 
         node = prev_node
 
-    node.root().headers["White ACPL"] = acpl(white_cpl)
-    node.root().headers["Black ACPL"] = acpl(black_cpl)
+    node.root().headers["White ACPL"] = round(acpl(white_cpl))
+    node.root().headers["Black ACPL"] = round(acpl(black_cpl))
 
     # Second pass:
     #
