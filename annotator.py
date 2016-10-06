@@ -12,14 +12,14 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import sys
 import argparse
+import json
+import logging
 import chess
 import chess.pgn
 import chess.uci
-import json
-import logging
 
-import sys
 
 # Initiate Logging Module
 logger = logging.getLogger(__name__)
@@ -30,16 +30,24 @@ if not logger.handlers:
 
 # Parameters
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file", "-f", help="input PGN file", required=True)
+    """
+    Define an argument parser and return the parsed arguments
+    """
+    parser = argparse.ArgumentParser(
+        prog='annotator.py',
+        description='takes a chess game in a PGN file and prints annotations to standard output')
+    parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
-    parser.add_argument("--depth", "-d", help="search depth", default="14")
+    parser.add_argument("--time", "-t", help="how long to spend on analysis", default="1", type=float, metavar="MINUTES")
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
 
 
 def setup_logging(args):
+    """
+    Sets logging module verbosity according to runtime arguments
+    """
     if args.verbose:
         if args.verbose >= 3:
             # EVERYTHING TO LOG FILE
@@ -59,37 +67,49 @@ def eval_numeric(info_handler):
     found. This facilitates comparing numerical evaluations with depth-to-mate
     evaluations
     """
-    if info_handler.info["score"][1].mate is not None:
+    dtm = info_handler.info["score"][1].mate
+    cp = info_handler.info["score"][1].cp
+
+    if dtm is not None:
         # We have depth-to-mate (dtm), so translate it into a numerical
         # evaluation. This number needs to be just big enough to guarantee that
         # it is always greater than a non-dtm evaluation.
 
         max_score = 10000
-        dtm = info_handler.info["score"][1].mate
 
         if dtm >= 1:
-            result = max_score-dtm
+            return max_score - dtm
         else:
-            result = -(max_score-dtm)
+            return -(max_score - dtm)
 
-    elif info_handler.info["score"][1].cp is not None:
+    elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
-        result = info_handler.info["score"][1].cp
+        return cp
 
-    return result
+    # If we haven't returned yet, then the info_handler had garbage in it
+    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
 
 
-def eval_human(info_handler):
+def eval_human(board, info_handler, invert):
     """
     Returns a human-readable evaluation of the position:
-        If depth-to-mate was found, return plain-text mate announcement (e.g. "White mates in 4")
+        If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
         If depth-to-mate was not found, return an absolute numeric evaluation
     """
-    if info_handler.info["score"][1].mate is not None:
-        return "Mate in ", info_handler.info["score"][1].mate
-    elif info_handler.info["score"][1].cp is not None:
+    dtm = info_handler.info["score"][1].mate
+    cp = info_handler.info["score"][1].cp
+
+    if dtm is not None:
+        return "Mate in {}".format(abs(dtm))
+    elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        return str(info_handler.info["score"][1].cp / 100)
+        if invert:
+            return eval_absolute(cp / -100, board.turn)
+        else:
+            return eval_absolute(cp / 100, board.turn)
+
+    # If we haven't returned yet, then the info_handler had garbage in it
+    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
 
 
 def eval_absolute(number, white_to_move):
@@ -105,17 +125,16 @@ def eval_absolute(number, white_to_move):
     return '{:.2f}'.format(number)
 
 
-def needs_annotation(judgment):
+def needs_annotation(delta):
     """
     Returns a boolean indicating whether a node with the given evaluations
     should have an annotation added
     """
-    delta = judgment["playedeval"] - judgment["besteval"]
 
-    return delta < -50
+    return delta > 50
 
 
-def judge_move(board, played_move, engine, info_handler, searchdepth):
+def judge_move(board, played_move, engine, info_handler, searchtime_s):
     """
      Evaluate the strength of a given move by comparing it to engine's best
      move and evaluation at a given depth, in a given board context
@@ -131,45 +150,40 @@ def judge_move(board, played_move, engine, info_handler, searchdepth):
            "playedcomment": A plain-text comment appropriate for annotating the played move
     """
 
+    # Calculate the search time in milliseconds
+    searchtime_ms = searchtime_s * 1000
+
     judgment = {}
 
     # First, get the engine bestmove and evaluation
     engine.position(board)
-    engine.go(depth=searchdepth)
+    engine.go(movetime=searchtime_ms / 2)
 
     judgment["bestmove"] = engine.bestmove
     judgment["besteval"] = eval_numeric(info_handler)
     judgment["pv"] = info_handler.info["pv"][1]
 
     # Annotate the best move
-    if info_handler.info["score"][1].mate is not None:
-        judgment["bestcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
-    elif info_handler.info["score"][1].cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        comment_score = eval_absolute(info_handler.info["score"][1].cp / 100, board.turn)
-        judgment["bestcomment"] = str(comment_score)
+    judgment["bestcomment"] = eval_human(board, info_handler, False)
 
     # If the played move matches the engine bestmove, we're done
     if played_move == engine.bestmove:
         judgment["playedeval"] = judgment["besteval"]
     else:
         # get the engine evaluation of the played move
-        board.push(played_move)                             # Put the played move on the board
-        engine.position(board)                              # Set the engine position to the board position
-        engine.go(depth=searchdepth)                        # Run a search on the engine position to depth = searchdepth
+        board.push(played_move)                # Put the played move on the board
+        engine.position(board)                 # Set the engine position to the board position
+        engine.go(movetime=searchtime_ms / 2)  # Run a search on the engine position
 
-        judgment["playedeval"] = -eval_numeric(info_handler)  # Store the numeric evaluation. We invert the sign since we're now evaluating from the opponent's perspective
+        # Store the numeric evaluation.
+        # We invert the sign since we're now evaluating from the opponent's perspective
+        judgment["playedeval"] = -eval_numeric(info_handler)
 
         # Take the played move off the stack (reset the board)
         board.pop()
 
     # Annotate the played move
-    if info_handler.info["score"][1].mate is not None:
-        judgment["playedcomment"] = "Mate in {}".format(abs(info_handler.info["score"][1].mate))
-    elif info_handler.info["score"][1].cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        comment_score = eval_absolute(info_handler.info["score"][1].cp / -100, board.turn)
-        judgment["playedcomment"] = str(comment_score)
+    judgment["playedcomment"] = eval_human(board, info_handler, True)
 
     return judgment
 
@@ -182,24 +196,14 @@ def get_nags(judgment):
 
     delta = judgment["playedeval"] - judgment["besteval"]
 
-    nags = []
-
     if delta < -300:
-        nags = [chess.pgn.NAG_BLUNDER]
+        return [chess.pgn.NAG_BLUNDER]
     elif delta < -150:
-        nags = [chess.pgn.NAG_MISTAKE]
+        return [chess.pgn.NAG_MISTAKE]
     elif delta < -75:
-        nags = [chess.pgn.NAG_DUBIOUS_MOVE]
-
-    # If the played move retains an overwhelming advantage, then it can't be a mistake or blunder
-    if judgment["playedeval"] > 800:
-        nags = []
-
-    # If the best move still gets an overwhelming disadvantage, then the played move can't be a mistake or a blunder
-    if judgment["besteval"] < -800:
-        nags = []
-
-    return nags
+        return [chess.pgn.NAG_DUBIOUS_MOVE]
+    else:
+        return []
 
 
 def var_end_comment(node, score):
@@ -219,12 +223,12 @@ def var_end_comment(node, score):
         return "Three-fold repetition"
     elif board.is_checkmate():
         # checkmate speaks for itself
-        return ""
+        return None
     else:
-        return score
+        return str(score)
 
 
-def add_annotation(node, info_handler, judgment, searchdepth):
+def add_annotation(node, judgment):
     """
     Add evaluations and the engine's primary variation as annotations to a node
     """
@@ -235,18 +239,17 @@ def add_annotation(node, info_handler, judgment, searchdepth):
         node.comment = judgment["playedcomment"]
 
     # Add the engine's primary variation (PV) as an annotation
-    # We truncate the PV to one half the search depth because engine variations tend to get silly near the end
+    # We truncate the PV to 10 moves because engine variations tend to get silly near the end
     prev_node.add_main_variation(judgment["bestmove"])
     var_node = prev_node.variation(judgment["bestmove"])
-    max_var_length = searchdepth // 2
 
-    for move in judgment["pv"][:max_var_length]:
+    for move in judgment["pv"][:10]:
         if var_node.move != move:
             var_node.add_main_variation(move)
             var_node = var_node.variation(move)
 
     # Add a comment to the end of the variation explaining the game state
-    var_node.comment = judgment["bestcomment"]
+    var_node.comment = var_end_comment(var_node, judgment["bestcomment"])
 
     # We added the variation as the main line, so now it has to be demoted
     # (This is done so that variations can be added to the final node)
@@ -256,7 +259,7 @@ def add_annotation(node, info_handler, judgment, searchdepth):
     node.nags = get_nags(judgment)
 
 
-def classify_opening(fen, db):
+def classify_opening(fen, ecodb):
     """
     Searches a JSON file with Encyclopedia of Chess Openings (ECO) data to
     check if the given FEN matches an existing opening record
@@ -273,7 +276,7 @@ def classify_opening(fen, db):
     classification["desc"] = ""
     classification["path"] = ""
 
-    for opening in db:
+    for opening in ecodb:
         if opening['f'] == fen:
             classification["code"] = opening['c']
             classification["desc"] = opening['n']
@@ -289,7 +292,7 @@ def eco_fen(node):
     board_fen = node.board().board_fen()
     castling_fen = node.board().castling_xfen()
 
-    if node.board().turn: # If white to move
+    if node.board().turn:  # If white to move
         to_move = 'w'
     else:
         to_move = 'b'
@@ -298,33 +301,97 @@ def eco_fen(node):
     return fen
 
 
+def debug_print(node, judgment):
+    """
+    Prints some debugging info about a position that was just analyzed
+    """
+
+    logger.debug(node.board())
+    logger.debug(node.board().fen())
+    logger.debug("Played move: %s", format(node.parent.board().san(node.move)))
+    logger.debug("Best move: %s", format(node.parent.board().san(judgment["bestmove"])))
+    logger.debug("Best eval: %s", format(judgment["besteval"]))
+    logger.debug("Best comment: %s", format(judgment["bestcomment"]))
+    logger.debug("PV: %s", format(node.parent.board().variation_san(judgment["pv"])))
+    logger.debug("Played eval: %s", format(judgment["playedeval"]))
+    logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+    logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
+    logger.debug("")
+
+
+def cpl(string):
+    """
+    Centipawn Loss
+    Takes a string and returns an integer representing centipawn loss of the move
+    We put a ceiling on this value so that big blunders don't skew the acpl too much
+    """
+
+    cpl = int(string)
+    max_cpl = 2000
+
+    return min(cpl, max_cpl)
+
+
+def acpl(cpl_list):
+    """
+    Average Centipawn Loss
+    Takes a list of integers and returns an average of the list contents
+    """
+    return sum(cpl_list) / len(cpl_list)
+
+
 def main():
+    """
+    Main function
+
+    - Initialize and handle the UCI analysis engine
+    - Attempt to classify the opening with ECO and identify the root node
+        * The root node is the position immediately after the ECO classification
+        * This allows us to skip analysis of moves that have an ECO classification
+    - Analyze the game, adding annotations where appropriate
+    - Print the game with the annotations
+    """
     args = parse_args()
     setup_logging(args)
+
+    ###########################################################################
     # Initialize the engine
+    ###########################################################################
     enginepath = args.engine
     try:
         engine = chess.uci.popen_engine(enginepath)
     except FileNotFoundError:
-        logger.critical("Engine '{}' was not found. Maybe it's not in your $PATH?".format(args.engine))
-        sys.exit(1)
+        errormsg = "Engine '{}' was not found. Aborting...".format(enginepath)
+        logger.critical(errormsg)
+        raise
     except PermissionError:
-        logger.critical("Engine '{}' could not be executed. Try checking the permissions.".format(args.engine))
-        sys.exit(1)
+        errormsg = "Engine '{}' could not be executed. Aborting...".format(enginepath)
+        logger.critical(errormsg)
+        raise
 
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
 
-    depth = int(args.depth)
-
+    ###########################################################################
     # Open a PGN file
+    ###########################################################################
     pgnfile = args.file
     try:
         with open(pgnfile) as pgn:
             game = chess.pgn.read_game(pgn)
     except PermissionError:
-        logger.critical("Input file not readable.")
+        errormsg = "Input file not readable. Aborting..."
+        logger.critical(errormsg)
+        raise
+
+    # Check for PGN parsing errors and abort if any were found
+    # This prevents us from burning up CPU time on nonsense positions
+    if game.errors:
+        logger.critical("There were errors parsing the PGN game:")
+        for error in game.errors:
+            logger.critical(error)
+        logger.critical("Aborting...")
         sys.exit(1)
 
     # Start keeping track of the root node
@@ -334,11 +401,32 @@ def main():
 
     # Try to verify that the PGN file was readable
     if node.parent is None:
-        logger.critical("Could not render the board. Is the file legal PGN?")
-        sys.exit(1)
+        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
+        logger.critical(errormsg)
+        raise RuntimeError(errormsg)
 
-    # Attempt to classify the opening
+    ###########################################################################
+    # Clear existing comments and variations
+    ###########################################################################
+    while not node == game.root():
+        prev_node = node.parent
+
+        node.comment = None
+        for variation in node.variations:
+            if not variation.is_main_variation():
+                node.remove_variation(variation)
+
+        node = prev_node
+
+    ###########################################################################
+    # Attempt to classify the opening and calculate the game length
+    ###########################################################################
+    node = root_node
+    logger.info("Classifying the opening...")
+
     ecodata = json.load(open('eco/eco.json', 'r'))
+    ply_count = 0
+
     while not node == game.root():
         prev_node = node.parent
 
@@ -355,48 +443,138 @@ def main():
             # Break (don't classify previous positions)
             break
 
+        ply_count += 1
         node = prev_node
 
     node = game.end()
 
-    # Analyze the final position
-    if node.board().is_game_over():
-        node.comment = var_end_comment(node, "")
-    else:
-        judgment = judge_move(node.parent.board(), node.move, engine, info_handler, depth)
-        add_annotation(node, info_handler, judgment, depth)
-    node = node.parent
+    ###########################################################################
+    # Perform game analysis
+    ###########################################################################
 
-    # We start at the end of the game and go backward so that the engine can
-    # make use of its cache when evaluating positions
+    # Calculate how many seconds we have to accomplish this
+    # The parameter is priced in minutes so we convert to seconds
+    budget = float(args.time) * 60
+    logger.debug("Total budget is {} seconds".format(budget))
+
+    # First pass:
+    #
+    #   - Performs a shallow-depth search to the root node
+    #   - Leaves annotations showing the centipawn loss of each move
+    #
+    # These annotations form the basis of the second pass, which will analyze
+    # those moves that had a high centipawn loss (mistakes)
+
+    # We have a fraction of the total budget to finish the first pass
+    pass1_budget = budget / 10
+
+    time_per_move = float(pass1_budget) / float(ply_count)
+
+    logger.debug("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
+
+    # Loop through the game doing shallow analysis
+    logger.info("Performing first pass...")
+
+    # Count the number of mistakes that will have to be annotated later
+    error_count = 0
+
+    node = game.end()
     while not node == root_node:
         # Remember where we are
         prev_node = node.parent
 
-        # Print some debugging info
-        logger.info(node.board())
-        logger.info(node.board().fen())
-        logger.info("Played move: %s", format(prev_node.board().san(node.move)))
-
         # Get the engine judgment of the played move in this position
-        judgment = judge_move(prev_node.board(), node.move, engine, info_handler, depth)
+        judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+        delta = judgment["besteval"] - judgment["playedeval"]
 
-        if needs_annotation(judgment):
-            add_annotation(node, info_handler, judgment, depth)
+        # Record the delta, to be referenced in the second pass
+        node.comment = str(delta)
+
+        # Count the number of mistakes that will have to be annotated later
+        if needs_annotation(delta):
+            error_count += 1
 
         # Print some debugging info
-        logger.debug("Best move: %s",      format(prev_node.board().san(judgment["bestmove"])))
-        logger.debug("Best eval: %s",      format(judgment["besteval"]))
-        logger.debug("Best comment: %s",   format(judgment["bestcomment"]))
-        logger.debug("PV: %s",             format(prev_node.board().variation_san(judgment["pv"])))
-        logger.debug("Played eval: %s",    format(judgment["playedeval"]))
-        logger.debug("Played comment: %s", format(judgment["playedcomment"]))
-        logger.debug("Delta: %s",          format(judgment["playedeval"] - judgment["besteval"]))
-        logger.info("")
+        debug_print(node, judgment)
+
+        # Go to the previous node
+        node = prev_node
+
+    # Calculate the average centipawn loss (ACPL) for each player
+    white_cpl = []
+    black_cpl = []
+
+    node = game.end()
+    while not node == root_node:
+        prev_node = node.parent
+
+        if node.board().turn:
+            black_cpl.append(cpl(node.comment))
+        else:
+            white_cpl.append(cpl(node.comment))
 
         node = prev_node
 
-    annotator = engine.name + " Depth: " + str(depth)
+    node.root().headers["White ACPL"] = round(acpl(white_cpl))
+    node.root().headers["Black ACPL"] = round(acpl(black_cpl))
+
+    # Second pass:
+    #
+    #   - Iterate through the comments looking for moves with high centipawn
+    #   loss
+    #   - Leaves annotations on those moves showing what the player could have
+    #   done instead
+    #
+
+    # We use the rest of the budgeted time to perform the second pass
+    pass2_budget = budget - pass1_budget
+    logger.debug("Pass 2 budget is %i seconds", pass2_budget)
+
+    try:
+        time_per_move = pass2_budget / error_count
+    except ZeroDivisionError:
+        logger.debug("No errors found on first pass!")
+        # There were no mistakes in the game, so deeply analyze all the moves
+        time_per_move = pass2_budget / ply_count
+        node = game.end()
+        while not node == root_node:
+            prev_node = node.parent
+            # Reset the comments to a value high enough to ensure that they all get analyzed
+            node.comment = '8593'
+            node = prev_node
+
+    # Loop through the game doing deep analysis on the flagged moves
+    logger.info("Performing second pass...")
+
+    node = game.end()
+    while not node == root_node:
+        # Remember where we are
+        prev_node = node.parent
+
+        delta = int(node.comment)
+
+        if needs_annotation(delta):
+            # Get the engine judgment of the played move in this position
+            judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+
+            # Verify that the engine still dislikes the played move
+            delta = judgment["besteval"] - judgment["playedeval"]
+            if needs_annotation(delta):
+                add_annotation(node, judgment)
+            else:
+                node.comment = None
+
+            # Print some debugging info
+            debug_print(node, judgment)
+        else:
+            node.comment = None
+
+        # Go to the previous node
+        node = prev_node
+
+    ###########################################################################
+
+    annotator = engine.name
     node.root().comment = annotator
     node.root().headers["Annotator"] = annotator
 
