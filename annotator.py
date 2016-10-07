@@ -421,6 +421,10 @@ def get_pass1_budget(total_budget):
     return total_budget / 10
 
 
+def get_time_per_move(pass_budget, ply_count):
+    return float(pass_budget) / float(ply_count)
+
+
 def analyze_game(game, arg_time, enginepath):
     """
     Take a PGN game and return a GameNode with engine analysis added
@@ -485,7 +489,7 @@ def analyze_game(game, arg_time, enginepath):
     # We have a fraction of the total budget to finish the first pass
     pass1_budget = get_pass1_budget(budget)
 
-    time_per_move = float(pass1_budget) / float(ply_count)
+    time_per_move = get_time_per_move(pass1_budget, ply_count)
 
     logger.debug("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
 
