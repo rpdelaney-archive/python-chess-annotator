@@ -615,9 +615,9 @@ def main():
     analyzed_game = analyze_game(game, args.time, args.engine)
 
     # Print out the PGN with all the annotations we've added
-    return(analyzed_game)
+    print(analyzed_game)
 
 if __name__ == "__main__":
-    print(main())
+    main()
 
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
