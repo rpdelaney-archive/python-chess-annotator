@@ -12,7 +12,6 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import sys
 import argparse
 import json
 import logging
@@ -617,11 +616,12 @@ def main():
     # Check for PGN parsing errors and abort if any were found
     # This prevents us from burning up CPU time on nonsense positions
     if game.errors:
-        logger.critical("There were errors parsing the PGN game:")
+        errormsg = "There were errors parsing the PGN game:"
+        logger.critical(errormsg)
         for error in game.errors:
             logger.critical(error)
         logger.critical("Aborting...")
-        sys.exit(1)
+        raise RuntimeError(errormsg)
 
     # Try to verify that the PGN file was readable
     if game.end().parent is None:
