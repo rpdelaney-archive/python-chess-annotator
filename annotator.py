@@ -103,9 +103,9 @@ def eval_human(board, info_handler, invert):
     elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
         if invert:
-            return eval_absolute(cp / -100, board.turn)
+            return '{:.2f}'.format(eval_absolute(cp / -100, board.turn))
         else:
-            return eval_absolute(cp / 100, board.turn)
+            return '{:.2f}'.format(eval_absolute(cp / 100, board.turn))
 
     # If we haven't returned yet, then the info_handler had garbage in it
     raise RuntimeError("Evaluation found in the info_handler was unintelligible")
@@ -120,8 +120,7 @@ def eval_absolute(number, white_to_move):
     if not white_to_move:
         number = -number
 
-    # Humans are used to evaluations padded with zeroes
-    return '{:.2f}'.format(number)
+    return number
 
 
 def needs_annotation(delta):
