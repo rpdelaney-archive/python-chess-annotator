@@ -413,6 +413,10 @@ def get_acpl(game, root_node):
     return node.root()
 
 
+def total_budget(arg_time):
+    return float(arg_time) * 60
+
+
 def analyze_game(game, arg_time, enginepath):
     """
     Take a PGN game and return a GameNode with engine analysis added
@@ -463,7 +467,7 @@ def analyze_game(game, arg_time, enginepath):
 
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
-    budget = float(arg_time) * 60
+    budget = total_budget(arg_time)
     logger.debug("Total budget is {} seconds".format(budget))
 
     # First pass:
