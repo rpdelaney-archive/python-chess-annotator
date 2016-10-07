@@ -421,6 +421,10 @@ def get_pass1_budget(total_budget):
     return total_budget / 10
 
 
+def get_pass2_budget(total_budget, pass1_budget):
+    return total_budget - pass1_budget
+
+
 def get_time_per_move(pass_budget, ply_count):
     return float(pass_budget) / float(ply_count)
 
@@ -533,7 +537,8 @@ def analyze_game(game, arg_time, enginepath):
     #
 
     # We use the rest of the budgeted time to perform the second pass
-    pass2_budget = budget - pass1_budget
+    pass2_budget = get_pass2_budget(budget, pass1_budget)
+
     logger.debug("Pass 2 budget is %i seconds", pass2_budget)
 
     try:
