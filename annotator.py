@@ -12,6 +12,7 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import os
 import argparse
 import json
 import logging
@@ -363,7 +364,9 @@ def classify_opening(game):
     Takes a game and adds an ECO code classification for the opening
     Returns the classified game and root_node, which is the node where the classification was made
     """
-    ecodata = json.load(open('eco/eco.json', 'r'))
+    ecofile = os.path.join(os.path.dirname(__file__), 'eco/eco.json')
+    ecodata = json.load(open(ecofile, 'r'))
+
     ply_count = 0
 
     node = game.end()
