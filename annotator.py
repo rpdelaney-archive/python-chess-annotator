@@ -34,10 +34,10 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(
         prog='annotator.py',
-        description='takes a chess game in a PGN file and prints annotations to standard output')
+        description='takes chess games in a PGN file and prints annotations to standard output')
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
-    parser.add_argument("--time", "-t", help="how long to spend on analysis", default="1", type=float, metavar="MINUTES")
+    parser.add_argument("--time", "-t", help="how long to spend on each game", default="1", type=float, metavar="MINUTES")
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
