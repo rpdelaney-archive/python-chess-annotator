@@ -1,6 +1,6 @@
 #python-chess-annotator
-Takes a PGN file as an argument and annotates the first game in that file
-using an engine.
+Takes a PGN file as an argument and annotates the games in that file using an
+engine.
 
 Computes average centipawn loss (ACPL) for each side and stores it in the
 header.
