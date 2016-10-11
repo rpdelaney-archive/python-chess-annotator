@@ -21,14 +21,13 @@ import chess.pgn
 import chess.uci
 
 
-# Initiate Logging Module
+# Initialize Logging Module
 logger = logging.getLogger(__name__)
 if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
 
 
-# Parameters
 def parse_args():
     """
     Define an argument parser and return the parsed arguments
@@ -506,7 +505,6 @@ def analyze_game(game, arg_time, enginepath):
 
     node = game.end()
     while not node == root_node:
-        # Remember where we are
         prev_node = node.parent
 
         # Get the engine judgment of the played move in this position
@@ -523,7 +521,6 @@ def analyze_game(game, arg_time, enginepath):
         # Print some debugging info
         debug_print(node, judgment)
 
-        # Go to the previous node
         node = prev_node
 
     # Calculate the average centipawn loss (ACPL) for each player
@@ -560,7 +557,6 @@ def analyze_game(game, arg_time, enginepath):
 
     node = game.end()
     while not node == root_node:
-        # Remember where we are
         prev_node = node.parent
 
         delta = int(node.comment)
@@ -581,7 +577,6 @@ def analyze_game(game, arg_time, enginepath):
         else:
             node.comment = None
 
-        # Go to the previous node
         node = prev_node
 
     ###########################################################################
@@ -623,9 +618,6 @@ def main():
     args = parse_args()
     setup_logging(args)
 
-    ###########################################################################
-    # Open a PGN file
-    ###########################################################################
     pgnfile = args.file
     games = []
     try:
@@ -646,7 +638,6 @@ def main():
     for game in games:
         analyzed_game = analyze_game(game, args.time, args.engine)
 
-        # Print out the PGN with all the annotations we've added
         print(analyzed_game, '\n')
 
 if __name__ == "__main__":
