@@ -612,8 +612,8 @@ def main():
     """
     Main function
 
-    - Initialize and handle the UCI analysis engine
-    - Print the game with the annotations
+    - Load games from the PGN file into a list
+    - Annotate each game in the list, and print the game with the annotations
     """
     args = parse_args()
     setup_logging(args)
