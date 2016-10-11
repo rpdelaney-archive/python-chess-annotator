@@ -392,7 +392,7 @@ def classify_opening(game):
     return node.root(), root_node, ply_count
 
 
-def get_acpl(game, root_node):
+def add_acpl(game, root_node):
     white_cpl = []
     black_cpl = []
 
@@ -524,7 +524,7 @@ def analyze_game(game, arg_time, enginepath):
         node = prev_node
 
     # Calculate the average centipawn loss (ACPL) for each player
-    game = get_acpl(game, root_node)
+    game = add_acpl(game, root_node)
 
     # Second pass:
     #
