@@ -627,19 +627,27 @@ def main():
     # Open a PGN file
     ###########################################################################
     pgnfile = args.file
+    games = []
     try:
         with open(pgnfile) as pgn:
-            game = chess.pgn.read_game(pgn)
-            checkgame(game)
+            # Populate a list of games from the file
+            while True:
+                game = chess.pgn.read_game(pgn)
+                if game:
+                    checkgame(game)
+                    games.append(game)
+                else:
+                    break
     except PermissionError:
         errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
         raise
 
-    analyzed_game = analyze_game(game, args.time, args.engine)
+    for game in games:
+        analyzed_game = analyze_game(game, args.time, args.engine)
 
-    # Print out the PGN with all the annotations we've added
-    print(analyzed_game)
+        # Print out the PGN with all the annotations we've added
+        print(analyzed_game)
 
 if __name__ == "__main__":
     main()
