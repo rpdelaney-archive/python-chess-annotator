@@ -647,7 +647,7 @@ def main():
         analyzed_game = analyze_game(game, args.time, args.engine)
 
         # Print out the PGN with all the annotations we've added
-        print(analyzed_game)
+        print(analyzed_game, '\n')
 
 if __name__ == "__main__":
     main()
