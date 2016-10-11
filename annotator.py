@@ -593,6 +593,26 @@ def analyze_game(game, arg_time, enginepath):
     return node.root()
 
 
+def checkgame(game):
+    """
+    Check for PGN parsing errors and abort if any were found
+    This prevents us from burning up CPU time on nonsense positions
+    """
+    if game.errors:
+        errormsg = "There were errors parsing the PGN game:"
+        logger.critical(errormsg)
+        for error in game.errors:
+            logger.critical(error)
+        logger.critical("Aborting...")
+        raise RuntimeError(errormsg)
+
+    # Try to verify that the PGN file was readable
+    if game.end().parent is None:
+        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
+        logger.critical(errormsg)
+        raise RuntimeError(errormsg)
+
+
 def main():
     """
     Main function
@@ -610,26 +630,11 @@ def main():
     try:
         with open(pgnfile) as pgn:
             game = chess.pgn.read_game(pgn)
+            checkgame(game)
     except PermissionError:
         errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
         raise
-
-    # Check for PGN parsing errors and abort if any were found
-    # This prevents us from burning up CPU time on nonsense positions
-    if game.errors:
-        errormsg = "There were errors parsing the PGN game:"
-        logger.critical(errormsg)
-        for error in game.errors:
-            logger.critical(error)
-        logger.critical("Aborting...")
-        raise RuntimeError(errormsg)
-
-    # Try to verify that the PGN file was readable
-    if game.end().parent is None:
-        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
-        logger.critical(errormsg)
-        raise RuntimeError(errormsg)
 
     analyzed_game = analyze_game(game, args.time, args.engine)
 
