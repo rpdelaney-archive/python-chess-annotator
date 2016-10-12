@@ -393,6 +393,11 @@ def classify_opening(game):
 
 
 def add_acpl(game, root_node):
+    """
+    Takes a game and a root node, and adds PGN headers with the computed ACPL
+    (average centipawn loss) for each player. Returns a game with the added
+    headers.
+    """
     white_cpl = []
     black_cpl = []
 
