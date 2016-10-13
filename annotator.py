@@ -443,6 +443,11 @@ def analyze_game(game, arg_time, enginepath):
     - Analyze the game, adding annotations where appropriate
     - Return the root node with annotations
     """
+
+    # First, check the game for PGN parsing errors
+    # This is done so that we don't waste CPU time on nonsense games
+    checkgame(game)
+
     ###########################################################################
     # Initialize the engine
     ###########################################################################
@@ -627,7 +632,6 @@ def main():
     try:
         with open(pgnfile) as pgn:
             for game in iter(lambda: chess.pgn.read_game(pgn), None):
-                checkgame(game)
                 analyzed_game = analyze_game(game, args.time, args.engine)
                 print(analyzed_game, '\n')
     except PermissionError:
