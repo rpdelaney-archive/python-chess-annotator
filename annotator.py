@@ -632,8 +632,16 @@ def main():
     try:
         with open(pgnfile) as pgn:
             for game in iter(lambda: chess.pgn.read_game(pgn), None):
-                analyzed_game = analyze_game(game, args.time, args.engine)
-                print(analyzed_game, '\n')
+                try:
+                    analyzed_game = analyze_game(game, args.time, args.engine)
+                except KeyboardInterrupt:
+                    logger.critical("\nReceived KeyboardInterrupt.")
+                    raise
+                except Exception as e:
+                    logger.critical("\nAn unhandled exception occurred: {}".format(type(e)))
+                    raise e
+                else:
+                    print(analyzed_game, '\n')
     except PermissionError:
         errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
