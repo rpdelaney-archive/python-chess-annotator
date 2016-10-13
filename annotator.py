@@ -617,33 +617,23 @@ def main():
     """
     Main function
 
-    - Load games from the PGN file into a list
-    - Annotate each game in the list, and print the game with the annotations
+    - Load games from the PGN file
+    - Annotate each game, and print the game with the annotations
     """
     args = parse_args()
     setup_logging(args)
 
     pgnfile = args.file
-    games = []
     try:
         with open(pgnfile) as pgn:
-            # Populate a list of games from the file
-            while True:
-                game = chess.pgn.read_game(pgn)
-                if game:
-                    checkgame(game)
-                    games.append(game)
-                else:
-                    break
+            for game in iter(lambda: chess.pgn.read_game(pgn), None):
+                checkgame(game)
+                analyzed_game = analyze_game(game, args.time, args.engine)
+                print(analyzed_game, '\n')
     except PermissionError:
         errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
         raise
-
-    for game in games:
-        analyzed_game = analyze_game(game, args.time, args.engine)
-
-        print(analyzed_game, '\n')
 
 if __name__ == "__main__":
     main()
