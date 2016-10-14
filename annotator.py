@@ -50,8 +50,9 @@ def setup_logging(args):
     if args.verbose:
         if args.verbose >= 3:
             # EVERYTHING TO LOG FILE
-            # fill this in later
             logger.setLevel(logging.DEBUG)
+            hldr = logging.FileHandler('annotator.log')
+            logger.addHandler(hldr)
         elif args.verbose == 2:
             # DEBUG TO STDERR
             logger.setLevel(logging.DEBUG)
