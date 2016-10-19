@@ -147,6 +147,8 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
            "pv":            The engine's primary variation including the best move
            "playedeval":    A numeric evaluation of the played move
            "playedcomment": A plain-text comment appropriate for annotating the played move
+           "depth":         Search depth in plies
+           "nodes":         Number nodes searched
     """
 
     # Calculate the search time in milliseconds
@@ -161,6 +163,8 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     judgment["bestmove"] = engine.bestmove
     judgment["besteval"] = eval_numeric(info_handler)
     judgment["pv"] = info_handler.info["pv"][1]
+    judgment["depth"] = info_handler.info["depth"]
+    judgment["nodes"] = info_handler.info["nodes"]
 
     # Annotate the best move
     judgment["bestcomment"] = eval_human(board, info_handler, False)
@@ -315,6 +319,8 @@ def debug_print(node, judgment):
     logger.debug("Played eval: %s", format(judgment["playedeval"]))
     logger.debug("Played comment: %s", format(judgment["playedcomment"]))
     logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
+    logger.debug("Depth: %s", format(judgment["depth"]))
+    logger.debug("Nodes: %s", format(judgment["nodes"]))
     logger.debug("")
 
 
