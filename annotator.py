@@ -209,26 +209,30 @@ def get_nags(judgment):
         return []
 
 
-def var_end_comment(node, score):
+def var_end_comment(node, judgment):
     """
     Return a human-readable annotation explaining the board state (if the game
     is over) or a numerical evaluation (if it is not)
     """
     board = node.board()
+    score = judgment["bestcomment"]
+    depth = judgment["depth"]
 
     if board.is_stalemate():
-        return "Stalemate"
+        string = "Stalemate"
     elif board.is_insufficient_material():
-        return "Insufficient material to mate"
+        string = "Insufficient material to mate"
     elif board.can_claim_fifty_moves():
-        return "Fifty move rule"
+        string = "Fifty move rule"
     elif board.can_claim_threefold_repetition():
-        return "Three-fold repetition"
+        string = "Three-fold repetition"
     elif board.is_checkmate():
         # checkmate speaks for itself
-        return None
+        string = None
     else:
-        return str(score)
+        string = str(score)
+
+    return "{} [d{}]".format(string, depth)
 
 
 def add_annotation(node, judgment):
@@ -252,7 +256,7 @@ def add_annotation(node, judgment):
             var_node = var_node.variation(move)
 
     # Add a comment to the end of the variation explaining the game state
-    var_node.comment = var_end_comment(var_node, judgment["bestcomment"])
+    var_node.comment = var_end_comment(var_node, judgment)
 
     # We added the variation as the main line, so now it has to be demoted
     # (This is done so that variations can be added to the final node)
