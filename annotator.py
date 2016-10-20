@@ -160,7 +160,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     engine.position(board)
     engine.go(movetime=searchtime_ms / 2)
 
-    judgment["bestmove"] = engine.bestmove
+    judgment["bestmove"] = info_handler.info["pv"][1][0]
     judgment["besteval"] = eval_numeric(info_handler)
     judgment["pv"] = info_handler.info["pv"][1]
     judgment["depth"] = info_handler.info["depth"]
@@ -170,7 +170,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     judgment["bestcomment"] = eval_human(board, info_handler, False)
 
     # If the played move matches the engine bestmove, we're done
-    if played_move == engine.bestmove:
+    if played_move == judgment["bestmove"]:
         judgment["playedeval"] = judgment["besteval"]
     else:
         # get the engine evaluation of the played move
