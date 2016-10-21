@@ -232,7 +232,7 @@ def var_end_comment(node, judgment):
     else:
         string = str(score)
 
-    return "{} [d{}]".format(string, depth)
+    return "{}/{}".format(string, depth)
 
 
 def add_annotation(node, judgment):
