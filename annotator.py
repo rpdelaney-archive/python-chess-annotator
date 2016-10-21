@@ -251,7 +251,18 @@ def add_annotation(node, judgment):
     var_node = prev_node.variation(judgment["bestmove"])
 
     for move in judgment["pv"][:10]:
+
         if var_node.move != move:
+            try:
+                assert var_node.board().is_legal(move)
+            except AssertionError:
+                logger.critical("\nTried to add an illegal move:")
+                logger.critical(var_node.board())
+                logger.critical(var_node.board().fen())
+                logger.critical(move)
+                logger.critical("engine bestmove: {}".format(judgment["bestmove"].uci()))
+                logger.critical("engine pv root : {}".format(judgment["pv"][0].uci()))
+                raise
             var_node.add_main_variation(move)
             var_node = var_node.variation(move)
 
