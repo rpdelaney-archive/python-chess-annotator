@@ -18,3 +18,18 @@ class test_eval_absolute(unittest.TestCase):
     def test_black(self):
         result = annotator.eval_absolute(10.00, False)
         self.assertEqual(result, -10.00)
+
+
+class test_needs_annotation(unittest.TestCase):
+
+    def test_high(self):
+        result = annotator.needs_annotation(100)
+        self.assertTrue(result)
+
+    def test_low(self):
+        result = annotator.needs_annotation(5)
+        self.assertFalse(result)
+
+    def test_negative(self):
+        result = annotator.needs_annotation(-100)
+        self.assertFalse(result)
