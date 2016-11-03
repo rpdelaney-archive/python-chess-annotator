@@ -33,3 +33,6 @@ class test_needs_annotation(unittest.TestCase):
     def test_negative(self):
         result = annotator.needs_annotation(-100)
         self.assertFalse(result)
+
+
+# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
