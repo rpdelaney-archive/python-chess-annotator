@@ -174,9 +174,9 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         judgment["playedeval"] = judgment["besteval"]
     else:
         # get the engine evaluation of the played move
-        board.push(played_move)                # Put the played move on the board
-        engine.position(board)                 # Set the engine position to the board position
-        engine.go(movetime=searchtime_ms / 2)  # Run a search on the engine position
+        board.push(played_move)
+        engine.position(board)
+        engine.go(movetime=searchtime_ms / 2)
 
         # Store the numeric evaluation.
         # We invert the sign since we're now evaluating from the opponent's perspective
