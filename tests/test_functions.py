@@ -34,5 +34,17 @@ class test_needs_annotation(unittest.TestCase):
         result = annotator.needs_annotation(-100)
         self.assertFalse(result)
 
+    def test_zero(self):
+        result = annotator.needs_annotation(0)
+        self.assertFalse(result)
+
+    def test_low_fraction(self):
+        result = annotator.needs_annotation(5.3333333)
+        self.assertFalse(result)
+
+    def test_high_fraction(self):
+        result = annotator.needs_annotation(500.33333)
+        self.assertTrue(result)
+
 
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
