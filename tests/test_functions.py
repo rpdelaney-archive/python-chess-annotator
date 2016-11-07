@@ -76,3 +76,5 @@ class test_cpl(unittest.TestCase):
     def test_negativestring(self):
         result = annotator.cpl('-2001')
         self.assertTrue(result == -2001)
+
+# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
