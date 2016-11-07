@@ -47,4 +47,22 @@ class test_needs_annotation(unittest.TestCase):
         self.assertTrue(result)
 
 
+class test_cpl(unittest.TestCase):
+
+    def test_int(self):
+        result = annotator.cpl(5)
+        self.assertTrue(result == 5)
+
+    def test_string(self):
+        result = annotator.cpl('5')
+        self.assertTrue(result == 5)
+
+    def test_bigstring(self):
+        result = annotator.cpl('2001')
+        self.assertTrue(result == 2000)
+
+    def test_negativestring(self):
+        result = annotator.cpl('-2001')
+        self.assertTrue(result == -2001)
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
