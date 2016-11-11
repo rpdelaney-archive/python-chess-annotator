@@ -41,6 +41,16 @@ class test_eval_numeric(unittest.TestCase):
         result = annotator.eval_numeric(info_handler)
         self.assertEqual(result, 9995)
 
+    def test_dtm_negative(self):
+        score = MagicMock()
+        score.mate = -5
+        score.cp = None
+        info_handler = MagicMock()
+        info_handler.info = {'score': [None, score]}
+
+        result = annotator.eval_numeric(info_handler)
+        self.assertEqual(result, -9995)
+
 
 class test_needs_annotation(unittest.TestCase):
 
