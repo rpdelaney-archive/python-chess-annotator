@@ -80,7 +80,7 @@ def eval_numeric(info_handler):
         if dtm >= 1:
             return max_score - dtm
         else:
-            return -(max_score - dtm)
+            return -(max_score + dtm)
 
     elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
