@@ -117,4 +117,12 @@ class test_cpl(unittest.TestCase):
         result = annotator.cpl('-2001')
         self.assertTrue(result == -2001)
 
+
+class test_acpl(unittest.TestCase):
+
+    def test_list(self):
+        testlist = [1, 2, 3, 4, 5, 6]
+        result = annotator.acpl(testlist)
+        self.assertEqual(result, 3.5)
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
