@@ -103,19 +103,19 @@ class test_cpl(unittest.TestCase):
 
     def test_int(self):
         result = annotator.cpl(5)
-        self.assertTrue(result == 5)
+        self.assertEqual(result, 5)
 
     def test_string(self):
         result = annotator.cpl('5')
-        self.assertTrue(result == 5)
+        self.assertEqual(result, 5)
 
     def test_bigstring(self):
         result = annotator.cpl('2001')
-        self.assertTrue(result == 2000)
+        self.assertEqual(result, 2000)
 
     def test_negativestring(self):
         result = annotator.cpl('-2001')
-        self.assertTrue(result == -2001)
+        self.assertEqual(result, -2001)
 
 
 class test_acpl(unittest.TestCase):
