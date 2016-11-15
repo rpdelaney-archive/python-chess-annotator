@@ -98,6 +98,9 @@ class test_needs_annotation(unittest.TestCase):
         result = annotator.needs_annotation(500.33333)
         self.assertTrue(result)
 
+    def test_raises_typeerror(self):
+        self.assertRaises(TypeError, annotator.needs_annotation, 'a')
+
 
 class test_cpl(unittest.TestCase):
 
