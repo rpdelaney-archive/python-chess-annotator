@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import MagicMock
 
+import chess
 import annotator
 
 
@@ -127,5 +128,13 @@ class test_acpl(unittest.TestCase):
         testlist = [1, 2, 3, 4, 5, 6]
         result = annotator.acpl(testlist)
         self.assertEqual(result, 3.5)
+
+
+class test_eco_fen(unittest.TestCase):
+
+    def test_board(self):
+        board = chess.Board('Q4R2/3kr3/1q3n1p/2p1p1p1/1p1bP1P1/1B1P3P/2PBK3/8 w - - 1 0')
+        result = annotator.eco_fen(board)
+        self.assertEqual(result, 'Q4R2/3kr3/1q3n1p/2p1p1p1/1p1bP1P1/1B1P3P/2PBK3/8 w -')
 
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
