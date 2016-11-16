@@ -2,6 +2,7 @@
 
 import unittest
 from unittest.mock import MagicMock
+import random
 
 import chess
 import annotator
@@ -136,5 +137,12 @@ class test_eco_fen(unittest.TestCase):
         board = chess.Board('Q4R2/3kr3/1q3n1p/2p1p1p1/1p1bP1P1/1B1P3P/2PBK3/8 w - - 1 0')
         result = annotator.eco_fen(board)
         self.assertEqual(result, 'Q4R2/3kr3/1q3n1p/2p1p1p1/1p1bP1P1/1B1P3P/2PBK3/8 w -')
+
+
+class test_get_total_budget(unittest.TestCase):
+
+    def test_is_float(self):
+        result = annotator.get_total_budget(random.random())
+        self.assertIsInstance(result, float)
 
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
