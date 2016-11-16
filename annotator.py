@@ -303,14 +303,14 @@ def classify_fen(fen, ecodb):
     return classification
 
 
-def eco_fen(node):
+def eco_fen(board):
     """
     Takes a board position and returns a FEN string formatted for matching with eco.json
     """
-    board_fen = node.board().board_fen()
-    castling_fen = node.board().castling_xfen()
+    board_fen = board.board_fen()
+    castling_fen = board.castling_xfen()
 
-    if node.board().turn:  # If white to move
+    if board.turn:  # If white to move
         to_move = 'w'
     else:
         to_move = 'b'
@@ -395,7 +395,7 @@ def classify_opening(game):
     while not node == game.root():
         prev_node = node.parent
 
-        fen = eco_fen(node)
+        fen = eco_fen(node.board())
         classification = classify_fen(fen, ecodata)
 
         if classification["code"] != "":
