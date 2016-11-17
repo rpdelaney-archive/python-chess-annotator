@@ -145,4 +145,9 @@ class test_get_total_budget(unittest.TestCase):
         result = annotator.get_total_budget(random.random())
         self.assertIsInstance(result, float)
 
+    def test_math(self):
+        seed = random.random()
+        result = annotator.get_total_budget(seed)
+        self.assertEqual(result, seed * 60)
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
