@@ -68,7 +68,6 @@ Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# 0-1
 
 ##To-do
 - Add support for chess960
-- Consider adding a GUI using Gooey[[4]]
 - Reduce the frequency of annotations in positions where one side has an
   overwhelming advantage
 - Don't truncate a PV that ends in mate
