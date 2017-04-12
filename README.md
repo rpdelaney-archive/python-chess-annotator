@@ -1,4 +1,4 @@
-#python-chess-annotator
+# python-chess-annotator
 Takes a PGN file as an argument and annotates the games in that file using an
 engine.
 
@@ -17,7 +17,7 @@ Requires python-chess[[3]] by Niklas Fiekas:
 pip install python-chess
 ```
 
-##Usage
+## Usage
 ```
 $ python annotator.py -h
 usage: annotator.py [-h] --file FILE [--engine ENGINE] [--time TIME]
@@ -66,14 +66,14 @@ Qxa4 Nxa4 { -6.25/25 } ) 25... Nxd1 26. h3 $6 { -9.91 } ( 26. a3 Rxa3
 Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# 0-1
 ```
 
-##To-do
+## To-do
 - Add support for variants (chess960, crazyhouse, etc)
 - Reduce the frequency of annotations in positions where one side has an
   overwhelming advantage
 - Don't truncate a PV that ends in mate
 - Provide an option to analyze moves from one player only
 
-##Legal
+## Legal
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or (at your
