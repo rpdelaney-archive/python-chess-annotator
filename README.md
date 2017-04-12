@@ -8,7 +8,7 @@ header.
 The result will be printed on standard output (the file on disk will be
 unchanged).
 
-##Dependencies
+## Dependencies
 You will need a UCI[[1]] chess engine for analysis. stockfish[[2]] is the
 default.
 
