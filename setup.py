@@ -40,7 +40,6 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: End Users/Desktop',
-        'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
