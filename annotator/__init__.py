@@ -33,7 +33,7 @@ def parse_args():
     Define an argument parser and return the parsed arguments
     """
     parser = argparse.ArgumentParser(
-        prog='annotator.py',
+        prog='annotator',
         description='takes chess games in a PGN file and prints annotations to standard output')
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine", default="stockfish")
