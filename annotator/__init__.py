@@ -135,20 +135,20 @@ def needs_annotation(delta):
 
 def judge_move(board, played_move, engine, info_handler, searchtime_s):
     """
-     Evaluate the strength of a given move by comparing it to engine's best
-     move and evaluation at a given depth, in a given board context
+    Evaluate the strength of a given move by comparing it to engine's best
+    move and evaluation at a given depth, in a given board context
 
-     Returns a judgment
+    Returns a judgment
 
-     A judgment is a dictionary containing the following elements:
-           "bestmove":      The best move in the position, according to the engine
-           "besteval":      A numeric evaluation of the position after the best move is played
-           "bestcomment":   A plain-text comment appropriate for annotating the best move
-           "pv":            The engine's primary variation including the best move
-           "playedeval":    A numeric evaluation of the played move
-           "playedcomment": A plain-text comment appropriate for annotating the played move
-           "depth":         Search depth in plies
-           "nodes":         Number nodes searched
+    A judgment is a dictionary containing the following elements:
+          "bestmove":      The best move in the position, according to the engine
+          "besteval":      A numeric evaluation of the position after the best move is played
+          "bestcomment":   A plain-text comment appropriate for annotating the best move
+          "pv":            The engine's primary variation including the best move
+          "playedeval":    A numeric evaluation of the played move
+          "playedcomment": A plain-text comment appropriate for annotating the played move
+          "depth":         Search depth in plies
+          "nodes":         Number nodes searched
     """
 
     # Calculate the search time in milliseconds
