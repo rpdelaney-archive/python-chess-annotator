@@ -1,1 +1,4 @@
 *.pgn
+annotator.egg-info/
+build/
+dist/
