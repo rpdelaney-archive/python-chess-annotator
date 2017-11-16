@@ -35,9 +35,9 @@ optional arguments:
   --file FILE.pgn, -f FILE.pgn
                         input PGN file
   --engine ENGINE, -e ENGINE
-                        analysis engine
+                        analysis engine (default: stockfish)
   --time MINUTES, -t MINUTES
-                        how long to spend on each game
+                        how long to spend on each game (default: 1)
   --verbose, -v         increase verbosity
 
 $ python3 -m annotator -f byrne-fischer.pgn -t 15
