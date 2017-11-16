@@ -1,4 +1,5 @@
 *.pgn
-annotator.egg-info/
+*.egg-info/
 build/
 dist/
+*.pyc
