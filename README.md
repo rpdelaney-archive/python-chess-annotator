@@ -8,29 +8,39 @@ header.
 The result will be printed on standard output (the file on disk will be
 unchanged).
 
+## Installation
+```
+pip3 install chess-annotator
+```
+
 ## Dependencies
 You will need a UCI[[1]] chess engine for analysis. stockfish[[2]] is the
 default.
 
 Requires python-chess[[3]] by Niklas Fiekas:
 ```
-pip install python-chess
+pip3 install python-chess
 ```
 
 ## Usage
 ```
-$ python annotator.py -h
-usage: annotator.py [-h] --file FILE [--engine ENGINE] [--time TIME]
-                    [--verbose]
+$ python3 -m annotator -h
+usage: annotator [-h] --file FILE.pgn [--engine ENGINE] [--time MINUTES]
+                 [--verbose]
+
+takes chess games in a PGN file and prints annotations to standard output
 
 optional arguments:
-  -h, --help                 show this help message and exit
-  --file FILE, -f FILE       input PGN file
-  --engine ENGINE, -e ENGINE analysis engine (default: stockfish)
-  --time MINUTES, -t MINUTES time to spend on each game (default: 1)
-  --verbose, -v              increase verbosity (print debugging info)
+  -h, --help            show this help message and exit
+  --file FILE.pgn, -f FILE.pgn
+                        input PGN file
+  --engine ENGINE, -e ENGINE
+                        analysis engine
+  --time MINUTES, -t MINUTES
+                        how long to spend on each game
+  --verbose, -v         increase verbosity
 
-$ python annotator.py -f byrne-fischer.pgn -t 15
+$ python3 -m annotator -f byrne-fischer.pgn -t 15
 [Event "Third Rosenwald Trophy"]
 [Site "New York, NY USA"]
 [Date "1956.10.17"]
