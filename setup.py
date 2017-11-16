@@ -97,7 +97,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'sample=sample:main',
+            'annotator=annotator.__main__:main',
         ],
     },
 )
