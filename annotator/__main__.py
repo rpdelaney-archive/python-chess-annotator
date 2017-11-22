@@ -21,6 +21,14 @@ import chess.pgn
 import chess.uci
 
 
+# Constants
+THRESHOLD = {}
+THRESHOLD["BLUNDER"] = -300
+THRESHOLD["MISTAKE"] = -150
+THRESHOLD["DUBIOUS"] = -75
+MAX_SCORE = 10000
+MAX_CPL = 2000
+
 # Initialize Logging Module
 logger = logging.getLogger(__name__)
 if not logger.handlers:
@@ -75,12 +83,10 @@ def eval_numeric(info_handler):
         # evaluation. This number needs to be just big enough to guarantee that
         # it is always greater than a non-dtm evaluation.
 
-        max_score = 10000
-
         if dtm >= 1:
-            return max_score - dtm
+            return MAX_SCORE - dtm
         else:
-            return -(max_score + dtm)
+            return -(MAX_SCORE + dtm)
 
     elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
@@ -199,11 +205,11 @@ def get_nags(judgment):
 
     delta = judgment["playedeval"] - judgment["besteval"]
 
-    if delta < -300:
+    if delta < THRESHOLD["BLUNDER"]:
         return [chess.pgn.NAG_BLUNDER]
-    elif delta < -150:
+    elif delta < THRESHOLD["MISTAKE"]:
         return [chess.pgn.NAG_MISTAKE]
-    elif delta < -75:
+    elif delta < THRESHOLD["DUBIOUS"]:
         return [chess.pgn.NAG_DUBIOUS_MOVE]
     else:
         return []
@@ -347,9 +353,8 @@ def cpl(string):
     """
 
     cpl = int(string)
-    max_cpl = 2000
 
-    return min(cpl, max_cpl)
+    return min(cpl, MAX_CPL)
 
 
 def acpl(cpl_list):
@@ -668,6 +673,7 @@ def main():
         errormsg = "Input file not readable. Aborting..."
         logger.critical(errormsg)
         raise
+
 
 if __name__ == "__main__":
     main()
