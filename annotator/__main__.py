@@ -251,33 +251,15 @@ def add_annotation(node, judgment):
     if judgment["bestmove"] != node.move:
         node.comment = judgment["playedcomment"]
 
-    # Add the engine's primary variation (PV) as an annotation
-    # We truncate the PV to 10 moves because engine variations tend to get silly near the end
-    prev_node.add_main_variation(judgment["bestmove"])
-    var_node = prev_node.variation(judgment["bestmove"])
+    # Get the engine primary variation
+    variation = judgment["pv"]
 
-    for move in judgment["pv"][:10]:
-
-        if var_node.move != move:
-            try:
-                assert var_node.board().is_legal(move)
-            except AssertionError:
-                logger.critical("\nTried to add an illegal move:")
-                logger.critical(var_node.board())
-                logger.critical(var_node.board().fen())
-                logger.critical(move)
-                logger.critical("engine bestmove: {}".format(judgment["bestmove"].uci()))
-                logger.critical("engine pv root : {}".format(judgment["pv"][0].uci()))
-                raise
-            var_node.add_main_variation(move)
-            var_node = var_node.variation(move)
+    # Add the engine's primary variation as an annotation
+    prev_node.add_line(moves=variation)
 
     # Add a comment to the end of the variation explaining the game state
-    var_node.comment = var_end_comment(var_node, judgment)
-
-    # We added the variation as the main line, so now it has to be demoted
-    # (This is done so that variations can be added to the final node)
-    prev_node.demote(judgment["bestmove"])
+    var_end_node = prev_node.variation(judgment["pv"][0]).end()
+    var_end_node.comment = var_end_comment(var_end_node, judgment)
 
     # Add a Numeric Annotation Glyph (NAG) according to how weak the played move was
     node.nags = get_nags(judgment)
