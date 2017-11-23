@@ -246,12 +246,11 @@ def truncate_pv(board, pv):
     If the pv ends the game, return the full pv
     Otherwise, return the pv truncated to 10 half-moves
     """
-    test_board = board.copy()
 
     for move in pv:
-        test_board.push(move)
+        board.push(move)
 
-    if test_board.is_game_over():
+    if board.is_game_over():
         return pv
     else:
         return pv[:10]
