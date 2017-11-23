@@ -80,7 +80,6 @@ Bb4+ 38. Kd1 Bb3+ 39. Kc1 Ne2+ 40. Kb1 Nc3+ 41. Kc1 Rc2# 0-1
 - Add support for variants (chess960, crazyhouse, etc)
 - Reduce the frequency of annotations in positions where one side has an
   overwhelming advantage
-- Don't truncate a PV that ends in mate
 - Provide an option to analyze moves from one player only
 
 ## Legal

@@ -93,7 +93,6 @@ To-do
 -  Add support for variants (chess960, crazyhouse, etc)
 -  Reduce the frequency of annotations in positions where one side has
    an overwhelming advantage
--  Don’t truncate a PV that ends in mate
 -  Provide an option to analyze moves from one player only
 
 Legal

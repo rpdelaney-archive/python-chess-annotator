@@ -241,6 +241,22 @@ def var_end_comment(node, judgment):
     return "{}/{}".format(string, depth)
 
 
+def truncate_pv(node, pv):
+    """
+    If the pv ends the game, return the full pv
+    Otherwise, return the pv truncated to 10 half-moves
+    """
+    test_board = node.board().copy()
+
+    for move in pv:
+        test_board.push(move)
+
+    if test_board.is_game_over():
+        return pv
+    else:
+        return pv[:10]
+
+
 def add_annotation(node, judgment):
     """
     Add evaluations and the engine's primary variation as annotations to a node
@@ -252,7 +268,7 @@ def add_annotation(node, judgment):
         node.comment = judgment["playedcomment"]
 
     # Get the engine primary variation
-    variation = judgment["pv"]
+    variation = truncate_pv(node, judgment["pv"])
 
     # Add the engine's primary variation as an annotation
     prev_node.add_line(moves=variation)
