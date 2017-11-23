@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import random
 
 import chess
-import annotator
+import annotator.__main__ as annotator
 
 
 class test_eval_absolute(unittest.TestCase):
