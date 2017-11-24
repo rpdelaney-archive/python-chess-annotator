@@ -130,11 +130,12 @@ def eval_absolute(number, white_to_move):
     return number
 
 
-def needs_annotation(delta):
+def needs_annotation(judgment):
     """
     Returns a boolean indicating whether a node with the given evaluations
     should have an annotation added
     """
+    delta = judgment["besteval"] - judgment["playedeval"]
 
     return delta > 50
 
@@ -429,10 +430,13 @@ def add_acpl(game, root_node):
     while not node == root_node:
         prev_node = node.parent
 
+        judgment = node.comment
+        delta = judgment["besteval"] - judgment["playedeval"]
+
         if node.board().turn:
-            black_cpl.append(cpl(node.comment))
+            black_cpl.append(cpl(delta))
         else:
-            white_cpl.append(cpl(node.comment))
+            white_cpl.append(cpl(delta))
 
         node = prev_node
 
@@ -543,13 +547,12 @@ def analyze_game(game, arg_time, enginepath):
 
         # Get the engine judgment of the played move in this position
         judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
-        delta = judgment["besteval"] - judgment["playedeval"]
 
         # Record the delta, to be referenced in the second pass
-        node.comment = str(delta)
+        node.comment = judgment
 
         # Count the number of mistakes that will have to be annotated later
-        if needs_annotation(delta):
+        if needs_annotation(judgment):
             error_count += 1
 
         # Print some debugging info
@@ -593,15 +596,14 @@ def analyze_game(game, arg_time, enginepath):
     while not node == root_node:
         prev_node = node.parent
 
-        delta = int(node.comment)
+        judgment = node.comment
 
-        if needs_annotation(delta):
+        if needs_annotation(judgment):
             # Get the engine judgment of the played move in this position
             judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
 
             # Verify that the engine still dislikes the played move
-            delta = judgment["besteval"] - judgment["playedeval"]
-            if needs_annotation(delta):
+            if needs_annotation(judgment):
                 add_annotation(node, judgment)
             else:
                 node.comment = None

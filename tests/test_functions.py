@@ -77,27 +77,45 @@ class test_eval_numeric(unittest.TestCase):
 class test_needs_annotation(unittest.TestCase):
 
     def test_high(self):
-        result = annotator.needs_annotation(100)
+        judgment = {}
+        judgment["besteval"] = 200
+        judgment["playedeval"] = 100
+        result = annotator.needs_annotation(judgment)
         self.assertTrue(result)
 
     def test_low(self):
-        result = annotator.needs_annotation(5)
+        judgment = {}
+        judgment["besteval"] = 5
+        judgment["playedeval"] = 0
+        result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
     def test_negative(self):
-        result = annotator.needs_annotation(-100)
+        judgment = {}
+        judgment["besteval"] = 0
+        judgment["playedeval"] = 100
+        result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
     def test_zero(self):
-        result = annotator.needs_annotation(0)
+        judgment = {}
+        judgment["besteval"] = 0
+        judgment["playedeval"] = 0
+        result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
     def test_low_fraction(self):
-        result = annotator.needs_annotation(5.3333333)
+        judgment = {}
+        judgment["besteval"] = 5.333333
+        judgment["playedeval"] = 0
+        result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
     def test_high_fraction(self):
-        result = annotator.needs_annotation(500.33333)
+        judgment = {}
+        judgment["besteval"] = 500.33333
+        judgment["playedeval"] = 0
+        result = annotator.needs_annotation(judgment)
         self.assertTrue(result)
 
     def test_raises_typeerror(self):
