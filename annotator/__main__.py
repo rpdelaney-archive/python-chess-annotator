@@ -404,7 +404,7 @@ def classify_opening(game):
             # Add some comments classifying the opening
             node.root().headers["ECO"] = classification["code"]
             node.root().headers["Opening"] = classification["desc"]
-            node.comment = classification["code"] + " " + classification["desc"]
+            node.comment = "{} {}".format(classification["code"], classification["desc"])
             # Remember this position so we don't analyze the moves preceding it later
             root_node = node
             # Break (don't classify previous positions)
