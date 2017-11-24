@@ -318,7 +318,7 @@ def eco_fen(board):
     else:
         to_move = 'b'
 
-    fen = board_fen + " " + to_move + " " + castling_fen
+    fen = "{} {} {}".format(board_fen, to_move, castling_fen)
     return fen
 
 
