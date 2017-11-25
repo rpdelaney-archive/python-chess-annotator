@@ -120,15 +120,15 @@ class test_needs_annotation(unittest.TestCase):
 
     def test_small_error_big_advantage(self):
         judgment = {}
-        judgment["besteval"] = 500
-        judgment["playedeval"] = 400
+        judgment["besteval"] = 600
+        judgment["playedeval"] = 500
         result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
     def test_small_error_big_disadvantage(self):
         judgment = {}
-        judgment["besteval"] = -400
-        judgment["playedeval"] = -500
+        judgment["besteval"] = -500
+        judgment["playedeval"] = -600
         result = annotator.needs_annotation(judgment)
         self.assertFalse(result)
 
