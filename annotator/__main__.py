@@ -340,6 +340,7 @@ def debug_print(node, judgment):
     logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
     logger.debug("Depth: %s", format(judgment["depth"]))
     logger.debug("Nodes: %s", format(judgment["nodes"]))
+    logger.debug("Needs annotation: %s", format(needs_annotation(judgment)))
     logger.debug("")
 
 
