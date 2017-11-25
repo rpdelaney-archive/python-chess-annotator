@@ -74,6 +74,34 @@ class test_eval_numeric(unittest.TestCase):
         self.assertEqual(result, -5)
 
 
+class test_winning_chances(unittest.TestCase):
+
+    def test_zero(self):
+        score = 0
+        result = round(annotator.winning_chances(score))
+        self.assertEqual(result, 50)
+
+    def test_one(self):
+        score = 100
+        result = round(annotator.winning_chances(score))
+        self.assertEqual(result, 60)
+
+    def test_four(self):
+        score = 400
+        result = round(annotator.winning_chances(score))
+        self.assertEqual(result, 83)
+
+    def test_negative_one(self):
+        score = -100
+        result = round(annotator.winning_chances(score))
+        self.assertEqual(result, 40)
+
+    def test_negative_four(self):
+        score = -400
+        result = round(annotator.winning_chances(score))
+        self.assertEqual(result, 17)
+
+
 class test_needs_annotation(unittest.TestCase):
 
     def test_high(self):

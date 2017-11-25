@@ -16,6 +16,7 @@ import os
 import argparse
 import json
 import logging
+import math
 import chess
 import chess.pgn
 import chess.uci
@@ -128,6 +129,16 @@ def eval_absolute(number, white_to_move):
         number = -number
 
     return number
+
+
+def winning_chances(centipawns):
+    """
+    Takes an evaluation in centipawns and returns a decimal value estimating the
+    chance white will win the game
+
+    winning chances = 50 + 50 * (2 / (1 + e^(-0.004 * centipawns)) - 1)
+    """
+    return 50 + 50 * (2 / (1 + math.exp(-0.004 * centipawns)) - 1)
 
 
 def needs_annotation(judgment):
