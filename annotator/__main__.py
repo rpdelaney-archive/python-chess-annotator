@@ -133,8 +133,8 @@ def eval_absolute(number, white_to_move):
 
 def winning_chances(centipawns):
     """
-    Takes an evaluation in centipawns and returns a decimal value estimating the
-    chance white will win the game
+    Takes an evaluation in centipawns and returns an integer value estimating the
+    chance the player to move will win the game
 
     winning chances = 50 + 50 * (2 / (1 + e^(-0.004 * centipawns)) - 1)
     """
