@@ -79,8 +79,6 @@ Bd1 { -2.00/23 } ) 26... Nh7 $2 { -1.37 } ( 26... Rg5 27. Qf2 { -2.89/24 })
 
 ## To-do
 - Add support for variants (chess960, crazyhouse, etc)
-- Reduce the frequency of annotations in positions where one side has an
-  overwhelming advantage
 - Provide an option to analyze moves from one player only
 
 ## Legal
