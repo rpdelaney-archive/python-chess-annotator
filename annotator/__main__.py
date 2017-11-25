@@ -146,16 +146,11 @@ def needs_annotation(judgment):
     Returns a boolean indicating whether a node with the given evaluations
     should have an annotation added
     """
-    best = int(judgment["besteval"])
-    played = int(judgment["playedeval"])
+    best = winning_chances(int(judgment["besteval"]))
+    played = winning_chances(int(judgment["playedeval"]))
     delta = best - played
 
-    if played >= 500:
-        return False
-    if best <= -500:
-        return False
-
-    return delta > 35
+    return delta > 7.5
 
 
 def judge_move(board, played_move, engine, info_handler, searchtime_s):
