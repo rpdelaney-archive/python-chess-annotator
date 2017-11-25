@@ -118,6 +118,34 @@ class test_needs_annotation(unittest.TestCase):
         result = annotator.needs_annotation(judgment)
         self.assertTrue(result)
 
+    def test_small_error_big_advantage(self):
+        judgment = {}
+        judgment["besteval"] = 500
+        judgment["playedeval"] = 400
+        result = annotator.needs_annotation(judgment)
+        self.assertFalse(result)
+
+    def test_small_error_big_disadvantage(self):
+        judgment = {}
+        judgment["besteval"] = -400
+        judgment["playedeval"] = -500
+        result = annotator.needs_annotation(judgment)
+        self.assertFalse(result)
+
+    def test_big_error_huge_advantage(self):
+        judgment = {}
+        judgment["besteval"] = 9998
+        judgment["playedeval"] = 1000
+        result = annotator.needs_annotation(judgment)
+        self.assertFalse(result)
+
+    def test_big_error_huge_disadvantage(self):
+        judgment = {}
+        judgment["besteval"] = -1000
+        judgment["playedeval"] = -9998
+        result = annotator.needs_annotation(judgment)
+        self.assertFalse(result)
+
     def test_raises_typeerror(self):
         self.assertRaises(TypeError, annotator.needs_annotation, 'a')
 
