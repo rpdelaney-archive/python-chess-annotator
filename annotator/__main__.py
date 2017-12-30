@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-© Copyright 2016 Ryan Delaney. All rights reserved.
+© Copyright 2016-2017 Ryan Delaney. All rights reserved.
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or (at your
@@ -20,6 +20,7 @@ import math
 import chess
 import chess.pgn
 import chess.uci
+import chess.variant
 
 
 # Constants
@@ -46,7 +47,8 @@ def parse_args():
         description='takes chess games in a PGN file and prints annotations to standard output')
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine (default: %(default)s)", default="stockfish")
-    parser.add_argument("--time", "-t", help="how long to spend on each game (default: %(default)s)", default="1", type=float, metavar="MINUTES")
+    parser.add_argument("--gametime", "-g", help="how long to spend on each game (default: %(default)s)", default="1", type=float, metavar="MINUTES")
+    parser.add_argument("--threads", "-t", help="threads for use by the engine (default: %(default))", type=int, default=1)
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
@@ -407,8 +409,8 @@ def classify_opening(game):
 
     ply_count = 0
 
+    root_node = game.root()
     node = game.end()
-    root_node = node
     while not node == game.root():
         prev_node = node.parent
 
@@ -460,8 +462,8 @@ def add_acpl(game, root_node):
     return node.root()
 
 
-def get_total_budget(arg_time):
-    return float(arg_time) * 60
+def get_total_budget(arg_gametime):
+    return float(arg_gametime) * 60
 
 
 def get_pass1_budget(total_budget):
@@ -476,7 +478,7 @@ def get_time_per_move(pass_budget, ply_count):
     return float(pass_budget) / float(ply_count)
 
 
-def analyze_game(game, arg_time, enginepath):
+def analyze_game(game, arg_gametime, enginepath, threads):
     """
     Take a PGN game and return a GameNode with engine analysis added
     - Attempt to classify the opening with ECO and identify the root node
@@ -507,6 +509,15 @@ def analyze_game(game, arg_time, enginepath):
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
+    if game.board().uci_variant:
+        engine.setoption({
+            "UCI_Variant": game.board().uci_variant,
+            "Threads": threads
+        })
+    else:
+        engine.setoption({
+            "Threads": threads
+        })
 
     # Start keeping track of the root node
     # This will change if we successfully classify the opening
@@ -531,7 +542,7 @@ def analyze_game(game, arg_time, enginepath):
 
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
-    budget = get_total_budget(arg_time)
+    budget = get_total_budget(arg_gametime)
     logger.debug("Total budget is {} seconds".format(budget))
 
     # First pass:
@@ -673,7 +684,7 @@ def main():
         with open(pgnfile) as pgn:
             for game in iter(lambda: chess.pgn.read_game(pgn), None):
                 try:
-                    analyzed_game = analyze_game(game, args.time, args.engine)
+                    analyzed_game = analyze_game(game, args.gametime, args.engine, args.threads)
                 except KeyboardInterrupt:
                     logger.critical("\nReceived KeyboardInterrupt.")
                     raise

@@ -91,7 +91,6 @@ Usage
 To-do
 -----
 
--  Add support for variants (chess960, crazyhouse, etc)
 -  Provide an option to analyze moves from one player only
 
 Legal
