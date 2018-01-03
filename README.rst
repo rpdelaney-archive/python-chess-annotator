@@ -32,9 +32,9 @@ by Niklas Fiekas:
     pip3 install python-chess
 
 
-Any of the variants supported by python-chess should work.[`4 http://python-chess.readthedocs.io/en/latest/variant.html`__]
+Any of the variants supported by python-chess should work.[`4 <http://python-chess.readthedocs.io/en/latest/variant.html>`__]
 You will need a UCI engine that supports the variant you are trying to analyze.
-Daniel Dugovic's stockfish fork[`5 https://github.com/ddugovic/Stockfish`__]
+Daniel Dugovic's stockfish fork[`5 <https://github.com/ddugovic/Stockfish>`__]
 supports most of the popular variants.
 
 Usage
