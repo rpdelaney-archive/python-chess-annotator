@@ -509,7 +509,7 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     engine.uci()
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
-    if game.board().uci_variant != "chess":
+    if game.board().uci_variant != "chess" or game.root().board().chess960:
         engine.setoption({
             "UCI_Variant": game.board().uci_variant,
             "UCI_Chess960": game.board().chess960,
