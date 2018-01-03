@@ -399,6 +399,20 @@ def clean_game(game):
     return node.root()
 
 
+def game_length(game):
+    """
+    Takes a game and returns an integer corresponding to the number of half-moves in the game
+    """
+    ply_count = 0
+    node = game.end()
+
+    while not node == game.root():
+        node = node.parent
+        ply_count += 1
+
+    return ply_count
+
+
 def classify_opening(game):
     """
     Takes a game and adds an ECO code classification for the opening
@@ -411,6 +425,20 @@ def classify_opening(game):
 
     root_node = game.root()
     node = game.end()
+
+    # Opening classification for variant games is not implemented (yet?)
+    is_960 = root_node.board().chess960
+    if is_960:
+        variant = "chess960"
+    else:
+        variant = type(node.board()).uci_variant
+
+    if variant != "chess":
+        logger.info("Skipping opening classification in variant game: {}".format(variant))
+        return node.root(), root_node, game_length(game)
+
+    logger.info("Classifying the opening for non-variant {} game...".format(variant))
+
     while not node == game.root():
         prev_node = node.parent
 
@@ -533,8 +561,6 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     ###########################################################################
     # Attempt to classify the opening and calculate the game length
     ###########################################################################
-    logger.info("Classifying the opening...")
-
     game, root_node, ply_count = classify_opening(game)
 
     ###########################################################################
