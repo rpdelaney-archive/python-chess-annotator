@@ -262,6 +262,7 @@ def truncate_pv(board, pv):
     """
 
     for move in pv:
+        assert board.is_legal(move)
         board.push(move)
 
     if board.is_game_over():
@@ -281,7 +282,7 @@ def add_annotation(node, judgment):
         node.comment = judgment["playedcomment"]
 
     # Get the engine primary variation
-    variation = truncate_pv(node.board(), judgment["pv"])
+    variation = truncate_pv(prev_node.board(), judgment["pv"])
 
     # Add the engine's primary variation as an annotation
     prev_node.add_line(moves=variation)
