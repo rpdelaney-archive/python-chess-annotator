@@ -627,8 +627,6 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     # We use the rest of the budgeted time to perform the second pass
     pass2_budget = get_pass2_budget(budget, pass1_budget)
 
-    logger.debug("Pass 2 budget is %i seconds", pass2_budget)
-
     try:
         time_per_move = pass2_budget / error_count
     except ZeroDivisionError:
@@ -639,8 +637,13 @@ def analyze_game(game, arg_gametime, enginepath, threads):
         while not node == root_node:
             prev_node = node.parent
             # Reset the comments to a value high enough to ensure that they all get analyzed
-            node.comment = '8593'
+            comment = {}
+            comment["besteval"] = "99999"
+            comment["playedeval"] = "0"
+            node.comment = comment
             node = prev_node
+
+    logger.debug("Pass 2 budget is %i seconds, with %f seconds per move", pass2_budget, time_per_move)
 
     # Loop through the game doing deep analysis on the flagged moves
     logger.info("Performing second pass...")
