@@ -22,7 +22,7 @@ setup(
     description='adds comments and analysis to chess games',
     long_description=long_description,
 
-    version='1.0.3',
+    version='1.1.0',
 
     # The project's main homepage.
     url='https://github.com/rpdelaney/python-chess-annotator',
