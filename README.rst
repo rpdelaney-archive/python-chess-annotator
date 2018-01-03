@@ -37,8 +37,8 @@ Usage
 ::
 
     $ python3 -m annotator -h
-    usage: annotator [-h] --file FILE.pgn [--engine ENGINE] [--time MINUTES]
-                     [--verbose]
+    usage: annotator [-h] --file FILE.pgn [--engine ENGINE] [--gametime MINUTES]
+                     [--threads THREADS] [--verbose]
 
     takes chess games in a PGN file and prints annotations to standard output
 
@@ -48,11 +48,13 @@ Usage
                             input PGN file
       --engine ENGINE, -e ENGINE
                             analysis engine (default: stockfish)
-      --time MINUTES, -t MINUTES
+      --gametime MINUTES, -g MINUTES
                             how long to spend on each game (default: 1)
+      --threads THREADS, -t THREADS
+                            threads for use by the engine (default: 1)
       --verbose, -v         increase verbosity
 
-    $ python3 -m annotator -f caruana-kasparov.pgn -t 15
+    $ python3 -m annotator -f caruana-kasparov.pgn -g 15
     [Event "Ultimate Blitz Challenge"]
     [Site "St. Louis, MO USA"]
     [Date "2016.04.29"]
@@ -91,7 +93,6 @@ Usage
 To-do
 -----
 
--  Add support for variants (chess960, crazyhouse, etc)
 -  Provide an option to analyze moves from one player only
 
 Legal
