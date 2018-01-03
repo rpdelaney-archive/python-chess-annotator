@@ -512,6 +512,7 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     if game.board().uci_variant:
         engine.setoption({
             "UCI_Variant": game.board().uci_variant,
+            "UCI_Chess960": game.board().chess960,
             "Threads": threads
         })
     else:
