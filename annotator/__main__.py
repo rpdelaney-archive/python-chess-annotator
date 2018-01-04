@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 if not logger.handlers:
     ch = logging.StreamHandler()
     logger.addHandler(ch)
+# Uncomment this line to get EXTREMELY verbose UCI communication logging:
+# logging.basicConfig(level=logging.DEBUG)
 
 
 def parse_args():
