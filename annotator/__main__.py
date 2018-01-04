@@ -250,11 +250,11 @@ def var_end_comment(node, judgment):
         string = "Three-fold repetition"
     elif board.is_checkmate():
         # checkmate speaks for itself
-        string = None
+        string = ""
     else:
-        string = str(score)
+        string = "{}/{}".format(str(score), str(depth))
 
-    return "{}/{}".format(string, depth)
+    return string
 
 
 def truncate_pv(board, pv):
