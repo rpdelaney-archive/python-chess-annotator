@@ -74,8 +74,8 @@ Usage
     [BlackElo "2812"]
     [PlyCount "74"]
     [Opening "King's Indian Attack: Symmetrical Defense"]
-    [White_ACPL "252"]
-    [Black_ACPL "141"]
+    [WhiteACPL "252"]
+    [BlackACPL "141"]
     [Annotator "Stockfish 8 64 POPCNT"]
 
     { Stockfish 8 64 POPCNT } 1. Nf3 Nf6 2. g3 g6 { A05 King's Indian Attack:

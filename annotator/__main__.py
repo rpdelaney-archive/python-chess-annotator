@@ -485,8 +485,8 @@ def add_acpl(game, root_node):
 
         node = prev_node
 
-    node.root().headers["White_ACPL"] = round(acpl(white_cpl))
-    node.root().headers["Black_ACPL"] = round(acpl(black_cpl))
+    node.root().headers["WhiteACPL"] = round(acpl(white_cpl))
+    node.root().headers["BlackACPL"] = round(acpl(black_cpl))
 
     return node.root()
 
