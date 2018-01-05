@@ -261,4 +261,41 @@ class test_truncate_pv(unittest.TestCase):
         self.assertEqual(result, target)
 
 
+class test_get_nags(unittest.TestCase):
+
+    def test_zero(self):
+        judgment = {'playedeval': 0, 'besteval': 0}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [])
+
+    def test_negative(self):
+        judgment = {'playedeval': 0, 'besteval': -10}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [])
+
+    def test_float(self):
+        judgment = {'playedeval': 0.001, 'besteval': -10.05}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [])
+
+    def test_blunder(self):
+        judgment = {'playedeval': 0, 'besteval': 350}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [chess.pgn.NAG_BLUNDER])
+
+    def test_mistake(self):
+        judgment = {'playedeval': 0, 'besteval': 200}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [chess.pgn.NAG_MISTAKE])
+
+    def test_dubious(self):
+        judgment = {'playedeval': 0, 'besteval': 100}
+        result = annotator.get_nags(judgment)
+        self.assertEqual(result, [chess.pgn.NAG_DUBIOUS_MOVE])
+
+    def test_typeerror(self):
+        judgment = {'playedeval': 0, 'besteval': 'foo'}
+        self.assertRaises(TypeError, annotator.get_nags, judgment)
+
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
