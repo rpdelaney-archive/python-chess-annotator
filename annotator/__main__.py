@@ -233,12 +233,11 @@ def get_nags(judgment):
         return []
 
 
-def var_end_comment(node, judgment):
+def var_end_comment(board, judgment):
     """
     Return a human-readable annotation explaining the board state (if the game
     is over) or a numerical evaluation (if it is not)
     """
-    board = node.board()
     score = judgment["bestcomment"]
     depth = judgment["depth"]
 
@@ -293,7 +292,7 @@ def add_annotation(node, judgment):
 
     # Add a comment to the end of the variation explaining the game state
     var_end_node = prev_node.variation(judgment["pv"][0]).end()
-    var_end_node.comment = var_end_comment(var_end_node, judgment)
+    var_end_node.comment = var_end_comment(var_end_node.board(), judgment)
 
     # Add a Numeric Annotation Glyph (NAG) according to how weak the played move was
     node.nags = get_nags(judgment)
