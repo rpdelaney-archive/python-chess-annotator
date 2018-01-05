@@ -369,7 +369,34 @@ class test_get_pass2_budget(unittest.TestCase):
 
 
 class test_get_time_per_move(unittest.TestCase):
-    pass
+
+    def test_divzero(self):
+        pass_budget = "1"
+        ply_count = "0"
+        self.assertRaises(ZeroDivisionError, annotator.get_time_per_move, pass_budget, ply_count)
+
+    def test_raises_valueerror(self):
+        pass_budget = "1"
+        ply_count = "a"
+        self.assertRaises(ValueError, annotator.get_time_per_move, pass_budget, ply_count)
+
+    def test_returns_float(self):
+        pass_budget = "1"
+        ply_count = "1"
+        result = annotator.get_time_per_move(pass_budget, ply_count)
+        assert isinstance(result, float)
+
+    def test_divides_integers(self):
+        pass_budget = "12"
+        ply_count = "30"
+        result = annotator.get_time_per_move(pass_budget, ply_count)
+        self.assertEqual(result, 0.4)
+
+    def test_divides_floats(self):
+        pass_budget = "15.25"
+        ply_count = "20"
+        result = annotator.get_time_per_move(pass_budget, ply_count)
+        self.assertEqual(result, 0.7625)
 
 
 class test_analyze_game(unittest.TestCase):
