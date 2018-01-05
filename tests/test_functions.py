@@ -340,4 +340,44 @@ class test_var_end_comment(unittest.TestCase):
         self.assertEqual(result, "foo/bar")
 
 
+class test_add_annotation(unittest.TestCase):
+    pass
+
+
+class test_classify_fen(unittest.TestCase):
+    pass
+
+
+class test_clean_game(unittest.TestCase):
+    pass
+
+
+class test_game_length(unittest.TestCase):
+    pass
+
+
+class test_classify_opening(unittest.TestCase):
+    pass
+
+
+class test_add_acpl(unittest.TestCase):
+    pass
+
+
+class test_get_pass2_budget(unittest.TestCase):
+    pass
+
+
+class test_get_time_per_move(unittest.TestCase):
+    pass
+
+
+class test_analyze_game(unittest.TestCase):
+    pass
+
+
+class test_checkgame(unittest.TestCase):
+    pass
+
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
