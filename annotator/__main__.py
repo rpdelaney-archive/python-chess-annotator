@@ -541,6 +541,29 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
     if game.board().uci_variant != "chess" or game.root().board().chess960:
+        # This is a variant game, so confirm that the engine we're using supports the variant.
+        if game.root().board().chess960:
+            try:
+                engine.options["UCI_Chess960"]
+            except KeyError:
+                message = "UCI_Chess960 is not supported by the engine and this is a chess960 game."
+                logger.critical(message)
+                raise RuntimeError(message)
+
+        if game.board().uci_variant != "chess":
+            try:
+                engine_variants = engine.options["UCI_Variant"].var  # the engine must provide a list in the UCI_Variant option
+                assert game.board().uci_variant in engine_variants  # the variant must be found in the UCI_Variant option list provided by the engine
+            except KeyError:
+                message = "UCI_Variant option is not supported by the engine and this is a variant game."
+                logger.critical(message)
+                raise RuntimeError(message)
+            except AssertionError:
+                message = "Variant {} is not supported by the engine.".format(game.board().uci_variant)
+                logger.critical(message)
+                raise RuntimeError(message)
+
+        # Now that engine support for the variant is confirmed, set engine UCI options as appropriate for the variant
         engine.setoption({
             "UCI_Variant": game.board().uci_variant,
             "UCI_Chess960": game.board().chess960,
