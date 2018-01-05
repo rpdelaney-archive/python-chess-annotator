@@ -298,4 +298,46 @@ class test_get_nags(unittest.TestCase):
         self.assertRaises(TypeError, annotator.get_nags, judgment)
 
 
+class test_var_end_comment(unittest.TestCase):
+
+    def test_stalemate(self):
+        board = chess.Board(fen='7k/8/6Q1/8/8/8/8/K7 b - - 0 1')
+        judgment = {'bestcomment': "", 'depth': ""}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "Stalemate")
+
+    def test_insufficient_material(self):
+        board = chess.Board(fen='7k/8/8/8/8/8/N7/K7 b - - 0 1')
+        judgment = {'bestcomment': "", 'depth': ""}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "Insufficient material to mate")
+
+    def test_fifty_move_rule(self):
+        board = chess.Board(fen='7k/8/8/8/8/1P6/N7/K7 b - - 100 150')
+        judgment = {'bestcomment': "", 'depth': ""}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "Fifty move rule")
+
+    def test_threefold_repetition(self):
+        board = chess.Board(fen='7k/8/8/8/8/1P6/N7/K7 b - - 0 1')
+        moves = ["Kg8", "Nc1", "Kh8", "Na2", "Kg8", "Nc1", "Kh8", "Na2", "Kg8", "Nc1", "Kh8", "Na2"]
+        for move in moves:
+            board.push_san(move)
+        judgment = {'bestcomment': "", 'depth': ""}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "Three-fold repetition")
+
+    def test_checkmate(self):
+        board = chess.Board(fen='8/8/8/8/8/1K6/8/1k1R4 b - - 0 1')
+        judgment = {'bestcomment': "", 'depth': ""}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "")
+
+    def test_other(self):
+        board = chess.Board(fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+        judgment = {'bestcomment': "foo", 'depth': "bar"}
+        result = annotator.var_end_comment(board, judgment)
+        self.assertEqual(result, "foo/bar")
+
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
