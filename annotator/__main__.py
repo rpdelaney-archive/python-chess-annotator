@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """
-© Copyright 2016-2017 Ryan Delaney. All rights reserved.
+© Copyright 2016-2018 Ryan Delaney. All rights reserved.
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or (at your
@@ -422,7 +422,11 @@ def classify_opening(game):
     Returns the classified game and root_node, which is the node where the classification was made
     """
     ecofile = os.path.join(os.path.dirname(__file__), 'eco/eco.json')
-    ecodata = json.load(open(ecofile, 'r'))
+    try:
+        ecodata = json.load(open(ecofile))
+    except json.decoder.JSONDecodeError:
+        errormsg = "ECO file '{}' is empty.".format(ecofile)
+        logger.warn(errormsg)
 
     ply_count = 0
 
@@ -442,7 +446,7 @@ def classify_opening(game):
 
     logger.info("Classifying the opening for non-variant {} game...".format(variant))
 
-    while not node == game.root():
+    while ecodata and not node == game.root():
         prev_node = node.parent
 
         fen = eco_fen(node.board())
