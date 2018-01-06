@@ -3,8 +3,10 @@
 import unittest
 from unittest.mock import MagicMock
 import random
+from io import StringIO
 
 import chess
+import chess.variant
 import annotator.__main__ as annotator
 
 
@@ -353,7 +355,23 @@ class test_clean_game(unittest.TestCase):
 
 
 class test_game_length(unittest.TestCase):
-    pass
+
+    def test_commented_game(self):
+        pgn_string = "{ Stockfish 8 64 POPCNT } 1. Nf3 Nf6 2. g3 g6 { A05 King's Indian Attack: Symmetrical Defense } 3. Bg2 Bg7 4. O-O O-O 5. c4 d6 6. b3 e5 7. Bb2 c5 8. e3 Nc6 9. Nc3 Bf5 10. d4 e4 11. Ne1 Re8 12. Nc2 h5 13. Qd2 h4 14. Ba3 $6 { -1.13 } ( 14. h3 g5 15. g4 Bg6 16. Rad1 Qe7 17. Qe2 a6 18. Ba3 a5 { 0.19/25 } ) 14...  b6 $6 { -0.04 } ( 14... Nh7 15. Nd5 Ng5 16. Bb2 Rc8 17. Rac1 Ne7 18. Nf4 h3 19.  Bh1 { -1.11/24 } ) 15. Rfd1 $6 { -1.15 } ( 15. h3 d5 16. g4 Be6 17. cxd5 Nxd5 18. Nxe4 f5 19. gxf5 gxf5 { 0.00/26 } ) 15... Bg4 16. Rdc1 Qd7 17. b4 Qf5 18.  Bb2 Rad8 19. Nb5 Bf3 20. d5 Ne5 $6 { -1.66 } ( 20... Nxb4 21. Ne1 Bxg2 22.  Nxg2 Nd3 23. Nxh4 Qh3 24. Bxf6 Bxf6 25. f4 { -3.14/25 } ) 21. Bxe5 Rxe5 22.  Ne1 hxg3 23. fxg3 Bh6 24. Rab1 Kg7 $6 { -1.08 } ( 24... Qh5 25. Rb3 Rf5 26.  bxc5 dxc5 27. Rc2 Ng4 28. h3 Bxg2 29. Kxg2 { -2.48/24 } ) 25. Rb3 Qh5 26. h3 $6 { -3.08 } ( 26. bxc5 bxc5 27. Nxa7 Rh8 28. h4 Qg4 29. Nc6 Rh5 30. Qf2 Bd1 { -2.00/23 } ) 26... Nh7 $2 { -1.37 } ( 26... Rg5 27. Qf2 { -2.89/24 }) 27. g4 Bxg4 28. hxg4 Qxg4 29. Qd1 $4 { -5.69 } ( 29. Qb2 Ng5 30. Nxd6 Qg3 31. Nf5+ gxf5 32. Kf1 Nf3 33. Qf2 Nh2+ { -2.30/24 } ) 29... Qg3 30. Qe2 Ng5 31. Kh1 Rh8 32. Nxd6 Kg8 33. bxc5 Bf8+ 34. Kg1 Nh3+ 35. Kf1 Bxd6 36. cxd6 Rf5+ 37. Nf3 Rxf3+ 0-1"
+        pgn = StringIO(pgn_string)
+        game = chess.pgn.read_game(pgn)
+        result = annotator.game_length(game)
+        self.assertEqual(result, 74)
+
+    def test_zh_game(self):
+        # chess.pgn didn't seem to detect the variant properly when a PGN game was imported via StringIO
+        game = chess.pgn.Game()
+        moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Nc3', 'Bc5', 'Bc4', 'Nf6', 'd3', 'O-O', 'O-O', 'd6', 'Bg5', 'h6', 'Bh4', 'Bg4', 'Nd5', 'Nxd5', 'Bxd8', 'Raxd8', 'Bxd5', 'B@h5', 'Bxc6', 'bxc6', 'N@g5', 'hxg5', 'Nxg5', 'N@f6', 'Qxg4', 'Bxg4', 'N@e7+', 'Kh8', 'Nxc6', 'Q@h4', 'B@g3', 'Qxg5', 'Nxd8', 'N@e2+', 'Kh1', 'Nxg3+', 'fxg3', 'B@h3', 'N@e1', 'N@f2+', 'Rxf2', 'Bxf2', 'R@f1', 'Bxe1', '@e7', 'Bxg2+', 'Kg1', '@f2+', 'Rxf2', 'Bxf2+', 'Kxg2', 'B@f3+', 'Kf1', 'R@g1+', 'Kxf2', 'R@g2']
+        node = game.root()
+        for move in moves:
+            node = node.add_variation(move)
+        result = annotator.game_length(game)
+        self.assertEqual(result, len(moves))
 
 
 class test_classify_opening(unittest.TestCase):
