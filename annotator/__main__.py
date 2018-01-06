@@ -268,7 +268,7 @@ def truncate_pv(board, pv):
         assert board.is_legal(move)
         board.push(move)
 
-    if board.is_game_over():
+    if board.is_game_over(claim_draw=True):
         return pv
     else:
         return pv[:10]
