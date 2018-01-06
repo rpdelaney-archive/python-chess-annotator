@@ -382,6 +382,10 @@ class test_add_acpl(unittest.TestCase):
     pass
 
 
+class test_get_pass1_budget(unittest.TestCase):
+    pass
+
+
 class test_get_pass2_budget(unittest.TestCase):
     pass
 
