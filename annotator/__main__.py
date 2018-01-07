@@ -387,7 +387,7 @@ def clean_game(game):
     """
     node = game.end()
 
-    while not node == game.root():
+    while True:
         prev_node = node.parent
 
         node.comment = None
@@ -395,6 +395,9 @@ def clean_game(game):
         for variation in node.variations:
             if not variation.is_main_variation():
                 node.remove_variation(variation)
+
+        if node == game.root():
+            break
 
         node = prev_node
 
