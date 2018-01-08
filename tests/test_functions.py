@@ -383,7 +383,14 @@ class test_add_acpl(unittest.TestCase):
 
 
 class test_get_pass1_budget(unittest.TestCase):
-    pass
+
+    def test_raises_typeerror(self):
+        self.assertRaises(TypeError, annotator.get_pass1_budget, 'a')
+
+    def test_math(self):
+        seed = random.random()
+        result = annotator.get_pass1_budget(seed)
+        self.assertEqual(result, seed / 10)
 
 
 class test_get_pass2_budget(unittest.TestCase):
