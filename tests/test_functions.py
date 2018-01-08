@@ -4,6 +4,8 @@ import unittest
 from unittest.mock import MagicMock
 import random
 from io import StringIO
+import json
+import os
 
 import chess
 import chess.variant
@@ -347,7 +349,20 @@ class test_add_annotation(unittest.TestCase):
 
 
 class test_classify_fen(unittest.TestCase):
-    pass
+
+    def test_eco_json(self):
+        ecofile = os.path.join(os.path.dirname(__file__), '../eco/eco.json')
+        ecodata = json.load(open(ecofile, 'r'))
+
+        for row in ecodata:
+            fen = "{} {}".format(row["f"], '- 0 1')
+            chess.Board(fen=fen)
+
+            classification = annotator.classify_fen(row["f"], ecodata)
+
+            assert classification["code"] == row["c"]
+            assert classification["desc"] == row["n"]
+            assert classification["path"] == row["m"]
 
 
 class test_clean_game(unittest.TestCase):
