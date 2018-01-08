@@ -268,7 +268,7 @@ def truncate_pv(board, pv):
         assert board.is_legal(move)
         board.push(move)
 
-    if board.is_game_over():
+    if board.is_game_over(claim_draw=True):
         return pv
     else:
         return pv[:10]
@@ -387,7 +387,7 @@ def clean_game(game):
     """
     node = game.end()
 
-    while not node == game.root():
+    while True:
         prev_node = node.parent
 
         node.comment = None
@@ -395,6 +395,9 @@ def clean_game(game):
         for variation in node.variations:
             if not variation.is_main_variation():
                 node.remove_variation(variation)
+
+        if node == game.root():
+            break
 
         node = prev_node
 
