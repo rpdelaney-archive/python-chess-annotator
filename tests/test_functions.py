@@ -422,7 +422,15 @@ class test_get_pass1_budget(unittest.TestCase):
 
 
 class test_get_pass2_budget(unittest.TestCase):
-    pass
+
+    def test_raises_typeerror(self):
+        self.assertRaises(TypeError, annotator.get_pass2_budget, 1, 'a')
+
+    def test_math(self):
+        seed1 = random.random()
+        seed2 = random.random()
+        result = annotator.get_pass2_budget(seed1, seed2)
+        self.assertEqual(result, seed1 - seed2)
 
 
 class test_get_time_per_move(unittest.TestCase):
