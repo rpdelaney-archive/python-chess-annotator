@@ -483,4 +483,12 @@ class test_checkgame(unittest.TestCase):
     pass
 
 
+class test_eval_human(unittest.TestCase):
+    pass
+
+
+class test_judge_move(unittest.TestCase):
+    pass
+
+
 # vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
