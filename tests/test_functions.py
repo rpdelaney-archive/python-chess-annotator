@@ -397,7 +397,8 @@ class test_game_length(unittest.TestCase):
         moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Nc3', 'Bc5', 'Bc4', 'Nf6', 'd3', 'O-O', 'O-O', 'd6', 'Bg5', 'h6', 'Bh4', 'Bg4', 'Nd5', 'Nxd5', 'Bxd8', 'Raxd8', 'Bxd5', 'B@h5', 'Bxc6', 'bxc6', 'N@g5', 'hxg5', 'Nxg5', 'N@f6', 'Qxg4', 'Bxg4', 'N@e7+', 'Kh8', 'Nxc6', 'Q@h4', 'B@g3', 'Qxg5', 'Nxd8', 'N@e2+', 'Kh1', 'Nxg3+', 'fxg3', 'B@h3', 'N@e1', 'N@f2+', 'Rxf2', 'Bxf2', 'R@f1', 'Bxe1', '@e7', 'Bxg2+', 'Kg1', '@f2+', 'Rxf2', 'Bxf2+', 'Kxg2', 'B@f3+', 'Kf1', 'R@g1+', 'Kxf2', 'R@g2']
         node = game.root()
         for move in moves:
-            node = node.add_variation(move)
+            assert node.board().parse_san(move) in node.board().legal_moves
+            node = node.add_variation(node.board().parse_san(move))
         result = annotator.game_length(game)
         self.assertEqual(result, len(moves))
 
