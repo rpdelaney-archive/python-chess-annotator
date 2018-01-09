@@ -484,7 +484,42 @@ class test_checkgame(unittest.TestCase):
 
 
 class test_eval_human(unittest.TestCase):
-    pass
+
+    def test_positive_dtm(self):
+        score = MagicMock()
+        score.mate = 5
+        score.cp = None
+        info_handler = MagicMock()
+        info_handler.info = {'score': [None, score]}
+        self.assertEqual(annotator.eval_human(True, info_handler), "Mate in 5")
+        self.assertEqual(annotator.eval_human(False, info_handler), "Mate in 5")
+
+    def test_negative_dtm(self):
+        score = MagicMock()
+        score.mate = -5
+        score.cp = None
+        info_handler = MagicMock()
+        info_handler.info = {'score': [None, score]}
+        self.assertEqual(annotator.eval_human(True, info_handler), "Mate in 5")
+        self.assertEqual(annotator.eval_human(False, info_handler), "Mate in 5")
+
+    def test_non_dtm(self):
+        score = MagicMock()
+        score.mate = None
+        score.cp = 100
+        info_handler = MagicMock()
+        info_handler.info = {'score': [None, score]}
+        self.assertEqual(annotator.eval_human(True, info_handler), "1.00")
+        self.assertEqual(annotator.eval_human(False, info_handler), "-1.00")
+
+    def test_raises_runtimeerror(self):
+        score = MagicMock()
+        score.mate = None
+        score.cp = None
+        info_handler = MagicMock()
+        info_handler.info = {'score': [None, score]}
+        self.assertRaises(RuntimeError, annotator.eval_human, True, info_handler)
+        self.assertRaises(RuntimeError, annotator.eval_human, False, info_handler)
 
 
 class test_judge_move(unittest.TestCase):
