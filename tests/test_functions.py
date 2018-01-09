@@ -263,6 +263,20 @@ class test_truncate_pv(unittest.TestCase):
         self.assertEqual(len(result), annotator.SHORT_PV_LEN)
         self.assertEqual(result, target)
 
+    def test_raises_assertionerror(self):
+        """ A line with an illegal move should raise an AssertionError """
+
+        board = chess.Board('1Q3bk1/5p2/2p3p1/1p1bN2p/4n2P/8/r5PK/8 b - - 1 34')
+        line = [chess.Move.from_uci('g8g7'), chess.Move.from_uci('e5f7'), chess.Move.from_uci('d5f7'), chess.Move.from_uci('b8e5'),
+                chess.Move.from_uci('e4f6'), chess.Move.from_uci('h2h3'), chess.Move.from_uci('b5b4'), chess.Move.from_uci('g2g4'),
+                chess.Move.from_uci('f8d6'), chess.Move.from_uci('e5d6'), chess.Move.from_uci('h5g4'), chess.Move.from_uci('h3g3'),
+                chess.Move.from_uci('f6e4'), chess.Move.from_uci('g3f4'), chess.Move.from_uci('e4d6'), chess.Move.from_uci('f4e5'),
+                chess.Move.from_uci('b4b3'), chess.Move.from_uci('e5d6'), chess.Move.from_uci('b3b2'), chess.Move.from_uci('h4h5'),
+                chess.Move.from_uci('g6h5'), chess.Move.from_uci('d6c8'), chess.Move.from_uci('b2b1q'), chess.Move.from_uci('d7c7'),
+                chess.Move.from_uci('b1b4'), chess.Move.from_uci('c7c6'), chess.Move.from_uci('a2c2'), chess.Move.from_uci('c6d7'),
+                chess.Move.from_uci('b4b8'), chess.Move.from_uci('d7e7'), chess.Move.from_uci('b8c7')]
+        self.assertRaises(AssertionError, annotator.truncate_pv, board, line)
+
 
 class test_get_nags(unittest.TestCase):
 
