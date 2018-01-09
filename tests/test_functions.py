@@ -258,10 +258,9 @@ class test_truncate_pv(unittest.TestCase):
                 chess.Move.from_uci('g6h5'), chess.Move.from_uci('d6d7'), chess.Move.from_uci('b2b1q'), chess.Move.from_uci('d7c7'),
                 chess.Move.from_uci('b1b4'), chess.Move.from_uci('c7c6'), chess.Move.from_uci('a2c2'), chess.Move.from_uci('c6d7'),
                 chess.Move.from_uci('b4b8'), chess.Move.from_uci('d7e7')]
-        target = [chess.Move.from_uci('g8g7'), chess.Move.from_uci('e5f7'), chess.Move.from_uci('d5f7'), chess.Move.from_uci('b8e5'),
-                  chess.Move.from_uci('e4f6'), chess.Move.from_uci('h2h3'), chess.Move.from_uci('b5b4'), chess.Move.from_uci('g2g4'),
-                  chess.Move.from_uci('f8d6'), chess.Move.from_uci('e5d6')]
+        target = line[:annotator.SHORT_PV_LEN]
         result = annotator.truncate_pv(board, line)
+        self.assertEqual(len(result), annotator.SHORT_PV_LEN)
         self.assertEqual(result, target)
 
 

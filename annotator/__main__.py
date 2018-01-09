@@ -30,6 +30,7 @@ THRESHOLD["MISTAKE"] = -150
 THRESHOLD["DUBIOUS"] = -75
 MAX_SCORE = 10000
 MAX_CPL = 2000
+SHORT_PV_LEN = 10
 
 # Initialize Logging Module
 logger = logging.getLogger(__name__)
@@ -271,7 +272,7 @@ def truncate_pv(board, pv):
     if board.is_game_over(claim_draw=True):
         return pv
     else:
-        return pv[:10]
+        return pv[:SHORT_PV_LEN]
 
 
 def add_annotation(node, judgment):
