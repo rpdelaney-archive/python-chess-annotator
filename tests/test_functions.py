@@ -197,12 +197,16 @@ class test_cpl(unittest.TestCase):
         self.assertEqual(result, 5)
 
     def test_bigstring(self):
-        result = annotator.cpl('2001')
-        self.assertEqual(result, 2000)
+        result = annotator.cpl('1000')
+        self.assertEqual(result, 1000)
 
     def test_negativestring(self):
         result = annotator.cpl('-2001')
         self.assertEqual(result, -2001)
+
+    def test_max_cpl(self):
+        result = annotator.cpl('5000')
+        self.assertEqual(result, annotator.MAX_CPL)
 
 
 class test_acpl(unittest.TestCase):
