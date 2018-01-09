@@ -406,16 +406,12 @@ class test_game_length(unittest.TestCase):
         self.assertEqual(result, 74)
 
     def test_zh_game(self):
-        # chess.pgn didn't seem to detect the variant properly when a PGN game was imported via StringIO
-        board = chess.variant.CrazyhouseBoard()
-        moves = ['e4', 'e5', 'Nf3', 'Nc6', 'Nc3', 'Bc5', 'Bc4', 'Nf6', 'd3', 'O-O', 'O-O', 'd6', 'Bg5', 'h6', 'Bh4', 'Bg4', 'Nd5', 'Nxd5', 'Bxd8', 'Raxd8', 'Bxd5', 'B@h5', 'Bxc6', 'bxc6', 'N@g5', 'hxg5', 'Nxg5', 'N@f6', 'Qxg4', 'Bxg4', 'N@e7+', 'Kh8', 'Nxc6', 'Q@h4', 'B@g3', 'Qxg5', 'Nxd8', 'N@e2+', 'Kh1', 'Nxg3+', 'fxg3', 'B@h3', 'N@e1', 'N@f2+', 'Rxf2', 'Bxf2', 'R@f1', 'Bxe1', '@e7', 'Bxg2+', 'Kg1', '@f2+', 'Rxf2', 'Bxf2+', 'Kxg2', 'B@f3+', 'Kf1', 'R@g1+', 'Kxf2', 'R@g2']
-        for move in moves:
-            assert board.parse_san(move) in board.legal_moves
-            board.push(board.parse_san(move))
-        game = chess.pgn.Game().from_board(board)
+        pgn_string = '[Variant "Crazyhouse"]\n{ Stockfish 020118 64 POPCNT } 1. e4 e5 2. Nf3 Nc6 3. Nc3 Bc5 4. Bc4 Nf6 5. d3 O-O 6. O-O d6 7. Bg5 h6 8. Bh4 Bg4 $2 { 3.23 } ( 8... Kh8 9. Nd5 { 0.99/19 } ) 9. Nd5 Nxd5 10. Bxd8 Raxd8 11. Bxd5 B@h5 12. Bxc6 $6 { 1.01 } ( 12. N@f5 { 2.27/17 } ) 12... bxc6 $2 { 3.70 } ( 12... Bxf3 13. gxf3 { 1.66/18 } ) 13. N@g5 hxg5 14. Nxg5 N@f6 15. Qxg4 Bxg4 16. N@e7+ $4 { -4.20 } ( 16. @h7+ Kh8 17. Q@g8+ Rxg8 18. Nxf7+ Kxh7 19. N@g5+ Kg6 20. @f5+ Bxf5 21. exf5+ Kxf5 22. B@e6+ Kg6 23. B@f5+ Kh5 24. g4+ Nxg4 25. Bxg4+ Kg6 26. N@h4+ Kf6 27. Ne4+ Ke7 28. Ng6+ Ke8 29. Nfxd6+ Rxd6 30. @f7+ Kd8 31. fxg8=Q+ N@e8 32. R@c8# ) 16... Kh8 17. Nxc6 $4 { -10.83 } ( 17. Q@h4+ Q@h6 { -4.31/16 } ) 17... Q@h4 18. B@g3 Qxg5 19. Nxd8 N@e2+ 20. Kh1 Nxg3+ $4 { -5.22 } ( 20... Rxd8 { -8.46/15 } ) 21. fxg3 $4 { -14.50 } ( 21. hxg3 Rxd8 { -5.41/16 } ) 21... B@h3 22. N@e1 N@f2+ 23. Rxf2 Bxf2 24. R@f1 Bxe1 25. @e7 Bxg2+ 26. Kg1 @f2+ 27. Rxf2 Bxf2+ 28. Kxg2 B@f3+ 29. Kf1 R@g1+ 30. Kxf2 R@g2# 0-1'
+        pgn = StringIO(pgn_string)
+        game = chess.pgn.read_game(pgn)
         assert game.errors == []
         result = annotator.game_length(game)
-        self.assertEqual(result, len(moves))
+        self.assertEqual(result, 60)
 
 
 class test_classify_opening(unittest.TestCase):
