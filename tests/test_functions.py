@@ -105,6 +105,10 @@ class test_winning_chances(unittest.TestCase):
         result = round(annotator.winning_chances(score))
         self.assertEqual(result, 17)
 
+    def test_raises_typeerror(self):
+        score = 'a'
+        self.assertRaises(TypeError, annotator.winning_chances, score)
+
 
 class test_needs_annotation(unittest.TestCase):
 
