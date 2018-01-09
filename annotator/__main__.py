@@ -102,7 +102,7 @@ def eval_numeric(info_handler):
     raise RuntimeError("Evaluation found in the info_handler was unintelligible")
 
 
-def eval_human(white_to_move, info_handler, invert):
+def eval_human(white_to_move, info_handler):
     """
     Returns a human-readable evaluation of the position:
         If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
@@ -115,10 +115,7 @@ def eval_human(white_to_move, info_handler, invert):
         return "Mate in {}".format(abs(dtm))
     elif cp is not None:
         # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        if invert:
-            return '{:.2f}'.format(eval_absolute(cp / -100, white_to_move))
-        else:
-            return '{:.2f}'.format(eval_absolute(cp / 100, white_to_move))
+        return '{:.2f}'.format(eval_absolute(cp / 100, white_to_move))
 
     # If we haven't returned yet, then the info_handler had garbage in it
     raise RuntimeError("Evaluation found in the info_handler was unintelligible")
@@ -192,7 +189,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     judgment["nodes"] = info_handler.info["nodes"]
 
     # Annotate the best move
-    judgment["bestcomment"] = eval_human(board.turn, info_handler, False)
+    judgment["bestcomment"] = eval_human(board.turn, info_handler)
 
     # If the played move matches the engine bestmove, we're done
     if played_move == judgment["bestmove"]:
@@ -211,7 +208,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         board.pop()
 
     # Annotate the played move
-    judgment["playedcomment"] = eval_human(board.turn, info_handler, True)
+    judgment["playedcomment"] = eval_human(not board.turn, info_handler)
 
     return judgment
 
