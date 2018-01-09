@@ -236,6 +236,9 @@ class test_get_total_budget(unittest.TestCase):
         result = annotator.get_total_budget(seed)
         self.assertEqual(result, seed * 60)
 
+    def test_raises_valueerror(self):
+        self.assertRaises(ValueError, annotator.get_total_budget, 'a')
+
 
 class test_truncate_pv(unittest.TestCase):
 
