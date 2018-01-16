@@ -51,7 +51,7 @@ def parse_args():
     parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
     parser.add_argument("--engine", "-e", help="analysis engine (default: %(default)s)", default="stockfish")
     parser.add_argument("--gametime", "-g", help="how long to spend on each game (default: %(default)s)", default="1", type=float, metavar="MINUTES")
-    parser.add_argument("--threads", "-t", help="threads for use by the engine (default: %(default))", type=int, default=1)
+    parser.add_argument("--threads", "-t", help="threads for use by the engine (default: %(default)s)", type=int, default=1)
     parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
 
     return parser.parse_args()
