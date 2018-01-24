@@ -17,6 +17,16 @@ Installation
 
     pip3 install chess-annotator
 
+If you clone this repository, you will have to update the eco submodule, since
+a clone does not do this automatically:
+
+::
+
+    git clone git@github.com:rpdelaney/python-chess-annotator.git
+    cd python-chess-annotator/
+    git submodule init eco
+    git submodule update eco
+
 Dependencies
 ------------
 
