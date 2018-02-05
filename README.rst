@@ -106,11 +106,6 @@ Usage
     31. Kh1 Rh8 32. Nxd6 Kg8 33. bxc5 Bf8+ 34. Kg1 Nh3+ 35. Kf1 Bxd6
     36. cxd6 Rf5+ 37. Nf3 Rxf3+ 0-1
 
-To-do
------
-
--  Provide an option to analyze moves from one player only
-
 Legal
 -----
 
