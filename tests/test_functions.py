@@ -375,7 +375,7 @@ class test_add_annotation(unittest.TestCase):
 class test_classify_fen(unittest.TestCase):
 
     def test_eco_json(self):
-        ecofile = os.path.join(os.path.dirname(__file__), '../eco/eco.json')
+        ecofile = os.path.join(os.path.dirname(__file__), '../annotator/eco/eco.json')
         ecodata = json.load(open(ecofile, 'r'))
 
         for row in ecodata:
