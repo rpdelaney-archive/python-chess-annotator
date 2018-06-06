@@ -21,6 +21,7 @@ import chess
 import chess.pgn
 import chess.uci
 import chess.variant
+import engeval
 
 
 # Constants
