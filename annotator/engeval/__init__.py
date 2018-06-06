@@ -57,7 +57,7 @@ class evaluation:
             return "Mate in {}".format(abs(self.dtm))
         elif self.cp is not None:
             # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-            return '{:.2f}'.format(self.eval_absolute(self.cp / 100, white_to_move))
+            return "{:.2f}".format(self.absolute / 100)
 
     def eval_numeric(self):
         """
