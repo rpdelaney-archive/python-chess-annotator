@@ -23,7 +23,7 @@ class evaluation:
 
         self.engine = self.eval_engine()
         self.absolute = self.eval_absolute(white_to_move)
-        self.human = self.eval_human()
+        self.human = self.eval_human(white_to_move)
         self.numeric = self.eval_numeric()
 
     def eval_engine(self):
@@ -47,7 +47,7 @@ class evaluation:
 
         return number
 
-    def eval_human(self):
+    def eval_human(self, white_to_move):
         """
         Returns a human-readable evaluation of the position:
             If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
@@ -57,7 +57,7 @@ class evaluation:
             return "Mate in {}".format(abs(self.dtm))
         elif self.cp is not None:
             # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-            return '{:.2f}'.format(self.eval_absolute(self.cp / 100, self.white_to_move))
+            return '{:.2f}'.format(self.eval_absolute(self.cp / 100, white_to_move))
 
     def eval_numeric(self):
         """
