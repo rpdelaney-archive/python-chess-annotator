@@ -149,7 +149,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
 
         # Store the numeric evaluation.
         # We invert the sign since we're now evaluating from the opponent's perspective
-        judgment["playedeval"] = played_evaluation.numeric
+        judgment["playedeval"] = -played_evaluation.numeric
 
         # Take the played move off the stack (reset the board)
         board.pop()
