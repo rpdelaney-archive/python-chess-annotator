@@ -155,7 +155,7 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         board.pop()
 
         # Annotate the played move
-        judgment["playedcomment"] = played_evaluation.numeric
+        judgment["playedcomment"] = played_evaluation.human
 
     return judgment
 
