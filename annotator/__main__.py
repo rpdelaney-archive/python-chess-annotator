@@ -76,64 +76,6 @@ def setup_logging(args):
             logger.setLevel(logging.INFO)
 
 
-def eval_numeric(info_handler):
-    """
-    Returns a numeric evaluation of the position, even if depth-to-mate was
-    found. This facilitates comparing numerical evaluations with depth-to-mate
-    evaluations
-    """
-    dtm = info_handler.info["score"][1].mate
-    cp = info_handler.info["score"][1].cp
-
-    if dtm is not None:
-        # We have depth-to-mate (dtm), so translate it into a numerical
-        # evaluation. This number needs to be just big enough to guarantee that
-        # it is always greater than a non-dtm evaluation.
-
-        if dtm >= 1:
-            return MAX_SCORE - dtm
-        else:
-            return -(MAX_SCORE + dtm)
-
-    elif cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
-        return cp
-
-    # If we haven't returned yet, then the info_handler had garbage in it
-    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
-
-
-def eval_human(white_to_move, info_handler):
-    """
-    Returns a human-readable evaluation of the position:
-        If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
-        If depth-to-mate was not found, return an absolute numeric evaluation
-    """
-    dtm = info_handler.info["score"][1].mate
-    cp = info_handler.info["score"][1].cp
-
-    if dtm is not None:
-        return "Mate in {}".format(abs(dtm))
-    elif cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
-        return '{:.2f}'.format(eval_absolute(cp / 100, white_to_move))
-
-    # If we haven't returned yet, then the info_handler had garbage in it
-    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
-
-
-def eval_absolute(number, white_to_move):
-    """
-    Accepts a relative evaluation (from the point of view of the player to
-    move) and returns an absolute evaluation (from the point of view of white)
-    """
-
-    if not white_to_move:
-        number = -number
-
-    return number
-
-
 def winning_chances(centipawns):
     """
     Takes an evaluation in centipawns and returns an integer value estimating the
@@ -182,34 +124,38 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     # First, get the engine bestmove and evaluation
     engine.position(board)
     engine.go(movetime=searchtime_ms / 2)
+    bestmove_evaluation = engeval.evaluation(info_handler, board.turn)
 
     judgment["bestmove"] = info_handler.info["pv"][1][0]
-    judgment["besteval"] = eval_numeric(info_handler)
+    judgment["besteval"] = bestmove_evaluation.numeric
     judgment["pv"] = info_handler.info["pv"][1]
     judgment["depth"] = info_handler.info["depth"]
     judgment["nodes"] = info_handler.info["nodes"]
 
     # Annotate the best move
-    judgment["bestcomment"] = eval_human(board.turn, info_handler)
+    judgment["bestcomment"] = bestmove_evaluation.human
 
     # If the played move matches the engine bestmove, we're done
     if played_move == judgment["bestmove"]:
         judgment["playedeval"] = judgment["besteval"]
+        # Annotate the played move
+        judgment["playedcomment"] = bestmove_evaluation.human
     else:
         # get the engine evaluation of the played move
         board.push(played_move)
         engine.position(board)
         engine.go(movetime=searchtime_ms / 2)
+        played_evaluation = engeval.evaluation(info_handler, board.turn)
 
         # Store the numeric evaluation.
         # We invert the sign since we're now evaluating from the opponent's perspective
-        judgment["playedeval"] = -eval_numeric(info_handler)
+        judgment["playedeval"] = played_evaluation.numeric
 
         # Take the played move off the stack (reset the board)
         board.pop()
 
-    # Annotate the played move
-    judgment["playedcomment"] = eval_human(not board.turn, info_handler)
+        # Annotate the played move
+        judgment["playedcomment"] = played_evaluation.numeric
 
     return judgment
 
