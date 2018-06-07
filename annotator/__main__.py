@@ -345,17 +345,17 @@ def debug_print(node, judgment):
 
     logger.debug(node.board())
     logger.debug(node.board().fen())
-    logger.debug("Played move: %s", node.parent.board().san(node.move))
-    logger.debug("Best move: %s", node.parent.board().san(judgment["bestmove"]))
-    logger.debug("Best eval: %s", judgment["besteval"])
-    logger.debug("Best comment: %s", judgment["bestcomment"])
-    logger.debug("PV: %s", node.parent.board().variation_san(judgment["pv"]))
-    logger.debug("Played eval: %s", judgment["playedeval"])
-    logger.debug("Played comment: %s", judgment["playedcomment"])
-    logger.debug("Delta: %s", judgment["besteval"] - judgment["playedeval"])
-    logger.debug("Depth: %s", judgment["depth"])
-    logger.debug("Nodes: %s", judgment["nodes"])
-    logger.debug("Needs annotation: %s", needs_annotation(judgment))
+    logger.debug("Played move: %s", format(node.parent.board().san(node.move)))
+    logger.debug("Best move: %s", format(node.parent.board().san(judgment["bestmove"])))
+    logger.debug("Best eval: %s", format(judgment["besteval"]))
+    logger.debug("Best comment: %s", format(judgment["bestcomment"]))
+    logger.debug("PV: %s", format(node.parent.board().variation_san(judgment["pv"])))
+    logger.debug("Played eval: %s", format(judgment["playedeval"]))
+    logger.debug("Played comment: %s", format(judgment["playedcomment"]))
+    logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
+    logger.debug("Depth: %s", format(judgment["depth"]))
+    logger.debug("Nodes: %s", format(judgment["nodes"]))
+    logger.debug("Needs annotation: %s", format(needs_annotation(judgment)))
     logger.debug("")
 
 
@@ -437,10 +437,10 @@ def classify_opening(game):
         variant = type(node.board()).uci_variant
 
     if variant != "chess":
-        logger.info("Skipping opening classification in variant game: {}", variant)
+        logger.info("Skipping opening classification in variant game: {}".format(variant))
         return node.root(), root_node, game_length(game)
 
-    logger.info("Classifying the opening for non-variant {} game...", variant)
+    logger.info("Classifying the opening for non-variant {} game...".format(variant))
 
     while not node == game.root():
         prev_node = node.parent
@@ -596,7 +596,7 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     # Calculate how many seconds we have to accomplish this
     # The parameter is priced in minutes so we convert to seconds
     budget = get_total_budget(arg_gametime)
-    logger.debug("Total budget is {} seconds", budget)
+    logger.debug("Total budget is {} seconds".format(budget))
 
     # First pass:
     #
@@ -745,7 +745,7 @@ def main():
                     logger.critical("\nReceived KeyboardInterrupt.")
                     raise
                 except Exception as e:
-                    logger.critical("\nAn unhandled exception occurred: {}", type(e))
+                    logger.critical("\nAn unhandled exception occurred: {}".format(type(e)))
                     raise e
                 else:
                     print(analyzed_game, '\n')
