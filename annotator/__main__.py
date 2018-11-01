@@ -28,6 +28,7 @@ ERROR_THRESHOLD = {
     'MISTAKE': -150,
     'DUBIOUS': -75,
 }
+NEEDS_ANNOTATION_THRESHOLD = 7.5
 MAX_SCORE = 10000
 MAX_CPL = 2000
 SHORT_PV_LEN = 10
@@ -170,7 +171,7 @@ def needs_annotation(judgment):
     played = winning_chances(int(judgment["playedeval"]))
     delta = best - played
 
-    return delta > 7.5
+    return delta > NEEDS_ANNOTATION_THRESHOLD
 
 
 def judge_move(board, played_move, engine, info_handler, searchtime_s):
