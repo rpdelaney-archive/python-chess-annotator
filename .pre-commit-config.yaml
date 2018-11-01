@@ -58,7 +58,7 @@ repos:
       - id: requirements-txt-fixer
 
       #  Assert that files in tests/ end in `_test.py`.
-      - id: name-tests-test
+#     - id: name-tests-test
 
       # Check for debugger imports and py37+ `breakpoint()` calls in python
       # source.
