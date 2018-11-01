@@ -23,10 +23,11 @@ import chess.variant
 
 
 # Constants
-THRESHOLD = {}
-THRESHOLD["BLUNDER"] = -300
-THRESHOLD["MISTAKE"] = -150
-THRESHOLD["DUBIOUS"] = -75
+THRESHOLD = {
+    'BLUNDER': -300,
+    'MISTAKE': -150,
+    'DUBIOUS': -75,
+}
 MAX_SCORE = 10000
 MAX_CPL = 2000
 SHORT_PV_LEN = 10
