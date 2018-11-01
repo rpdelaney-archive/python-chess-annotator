@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: UTF-8 -*-
 
 """
 © Copyright 2016-2018 Ryan Delaney. All rights reserved.
@@ -47,12 +46,28 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(
         prog='annotator',
-        description='takes chess games in a PGN file and prints annotations to standard output')
-    parser.add_argument("--file", "-f", help="input PGN file", required=True, metavar="FILE.pgn")
-    parser.add_argument("--engine", "-e", help="analysis engine (default: %(default)s)", default="stockfish")
-    parser.add_argument("--gametime", "-g", help="how long to spend on each game (default: %(default)s)", default="1", type=float, metavar="MINUTES")
-    parser.add_argument("--threads", "-t", help="threads for use by the engine (default: %(default)s)", type=int, default=1)
-    parser.add_argument("--verbose", "-v", help="increase verbosity", action="count")
+        description='takes chess games in a PGN file and prints '
+        'annotations to standard output')
+    parser.add_argument("--file", "-f",
+                        help="input PGN file",
+                        required=True,
+                        metavar="FILE.pgn")
+    parser.add_argument("--engine", "-e",
+                        help="analysis engine (default: %(default)s)",
+                        default="stockfish")
+    parser.add_argument("--gametime", "-g",
+                        help="how long to spend on each game '\
+                            '(default: %(default)s)",
+                        default="1",
+                        type=float,
+                        metavar="MINUTES")
+    parser.add_argument("--threads", "-t",
+                        help="threads for use by the engine '\
+                            '(default: %(default)s)",
+                        type=int,
+                        default=1)
+    parser.add_argument("--verbose", "-v", help="increase verbosity",
+                        action="count")
 
     return parser.parse_args()
 
@@ -95,17 +110,20 @@ def eval_numeric(info_handler):
             return -(MAX_SCORE + dtm)
 
     elif cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in centipawns)
+        # We don't have depth-to-mate, so return the numerical evaluation (in
+        # centipawns)
         return cp
 
     # If we haven't returned yet, then the info_handler had garbage in it
-    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
+    raise RuntimeError("Evaluation found in the info_handler was '\
+            'unintelligible")
 
 
 def eval_human(white_to_move, info_handler):
     """
     Returns a human-readable evaluation of the position:
-        If depth-to-mate was found, return plain-text mate announcement (e.g. "Mate in 4")
+        If depth-to-mate was found, return plain-text mate announcement
+        (e.g. "Mate in 4")
         If depth-to-mate was not found, return an absolute numeric evaluation
     """
     dtm = info_handler.info["score"][1].mate
@@ -114,11 +132,13 @@ def eval_human(white_to_move, info_handler):
     if dtm is not None:
         return "Mate in {}".format(abs(dtm))
     elif cp is not None:
-        # We don't have depth-to-mate, so return the numerical evaluation (in pawns)
+        # We don't have depth-to-mate, so return the numerical evaluation (in
+        # pawns)
         return '{:.2f}'.format(eval_absolute(cp / 100, white_to_move))
 
     # If we haven't returned yet, then the info_handler had garbage in it
-    raise RuntimeError("Evaluation found in the info_handler was unintelligible")
+    raise RuntimeError("Evaluation found in the info_handler was "
+                       "unintelligible")
 
 
 def eval_absolute(number, white_to_move):
@@ -135,8 +155,8 @@ def eval_absolute(number, white_to_move):
 
 def winning_chances(centipawns):
     """
-    Takes an evaluation in centipawns and returns an integer value estimating the
-    chance the player to move will win the game
+    Takes an evaluation in centipawns and returns an integer value estimating
+    the chance the player to move will win the game
 
     winning chances = 50 + 50 * (2 / (1 + e^(-0.004 * centipawns)) - 1)
     """
@@ -163,12 +183,17 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
     Returns a judgment
 
     A judgment is a dictionary containing the following elements:
-          "bestmove":      The best move in the position, according to the engine
-          "besteval":      A numeric evaluation of the position after the best move is played
-          "bestcomment":   A plain-text comment appropriate for annotating the best move
-          "pv":            The engine's primary variation including the best move
+          "bestmove":      The best move in the position, according to the
+                           engine
+          "besteval":      A numeric evaluation of the position after the best
+                           move is played
+          "bestcomment":   A plain-text comment appropriate for annotating the
+                           best move
+          "pv":            The engine's primary variation including the best
+                           move
           "playedeval":    A numeric evaluation of the played move
-          "playedcomment": A plain-text comment appropriate for annotating the played move
+          "playedcomment": A plain-text comment appropriate for annotating the
+                           played move
           "depth":         Search depth in plies
           "nodes":         Number nodes searched
     """
@@ -201,7 +226,8 @@ def judge_move(board, played_move, engine, info_handler, searchtime_s):
         engine.go(movetime=searchtime_ms / 2)
 
         # Store the numeric evaluation.
-        # We invert the sign since we're now evaluating from the opponent's perspective
+        # We invert the sign since we're now evaluating from the opponent's
+        # perspective
         judgment["playedeval"] = -eval_numeric(info_handler)
 
         # Take the played move off the stack (reset the board)
@@ -292,7 +318,8 @@ def add_annotation(node, judgment):
     var_end_node = prev_node.variation(judgment["pv"][0]).end()
     var_end_node.comment = var_end_comment(var_end_node.board(), judgment)
 
-    # Add a Numeric Annotation Glyph (NAG) according to how weak the played move was
+    # Add a Numeric Annotation Glyph (NAG) according to how weak the played
+    # move was
     node.nags = get_nags(judgment)
 
 
@@ -324,7 +351,8 @@ def classify_fen(fen, ecodb):
 
 def eco_fen(board):
     """
-    Takes a board position and returns a FEN string formatted for matching with eco.json
+    Takes a board position and returns a FEN string formatted for matching with
+    eco.json
     """
     board_fen = board.board_fen()
     castling_fen = board.castling_xfen()
@@ -346,13 +374,16 @@ def debug_print(node, judgment):
     logger.debug(node.board())
     logger.debug(node.board().fen())
     logger.debug("Played move: %s", format(node.parent.board().san(node.move)))
-    logger.debug("Best move: %s", format(node.parent.board().san(judgment["bestmove"])))
+    logger.debug("Best move: %s",
+                 format(node.parent.board().san(judgment["bestmove"])))
     logger.debug("Best eval: %s", format(judgment["besteval"]))
     logger.debug("Best comment: %s", format(judgment["bestcomment"]))
-    logger.debug("PV: %s", format(node.parent.board().variation_san(judgment["pv"])))
+    logger.debug("PV: %s",
+                 format(node.parent.board().variation_san(judgment["pv"])))
     logger.debug("Played eval: %s", format(judgment["playedeval"]))
     logger.debug("Played comment: %s", format(judgment["playedcomment"]))
-    logger.debug("Delta: %s", format(judgment["besteval"] - judgment["playedeval"]))
+    logger.debug("Delta: %s",
+                 format(judgment["besteval"] - judgment["playedeval"]))
     logger.debug("Depth: %s", format(judgment["depth"]))
     logger.debug("Nodes: %s", format(judgment["nodes"]))
     logger.debug("Needs annotation: %s", format(needs_annotation(judgment)))
@@ -362,8 +393,9 @@ def debug_print(node, judgment):
 def cpl(string):
     """
     Centipawn Loss
-    Takes a string and returns an integer representing centipawn loss of the move
-    We put a ceiling on this value so that big blunders don't skew the acpl too much
+    Takes a string and returns an integer representing centipawn loss of the
+    move We put a ceiling on this value so that big blunders don't skew the
+    acpl too much
     """
 
     cpl = int(string)
@@ -381,7 +413,8 @@ def acpl(cpl_list):
 
 def clean_game(game):
     """
-    Takes a game and strips all comments and variations, returning the "cleaned" game
+    Takes a game and strips all comments and variations, returning the
+    "cleaned" game
     """
     node = game.end()
 
@@ -404,7 +437,8 @@ def clean_game(game):
 
 def game_length(game):
     """
-    Takes a game and returns an integer corresponding to the number of half-moves in the game
+    Takes a game and returns an integer corresponding to the number of
+    half-moves in the game
     """
     ply_count = 0
     node = game.end()
@@ -419,7 +453,8 @@ def game_length(game):
 def classify_opening(game):
     """
     Takes a game and adds an ECO code classification for the opening
-    Returns the classified game and root_node, which is the node where the classification was made
+    Returns the classified game and root_node, which is the node where the
+    classification was made
     """
     ecofile = os.path.join(os.path.dirname(__file__), 'eco/eco.json')
     ecodata = json.load(open(ecofile, 'r'))
@@ -437,10 +472,12 @@ def classify_opening(game):
         variant = type(node.board()).uci_variant
 
     if variant != "chess":
-        logger.info("Skipping opening classification in variant game: {}".format(variant))
+        logger.info("Skipping opening classification in variant "
+                    "game: {}".format(variant))
         return node.root(), root_node, game_length(game)
 
-    logger.info("Classifying the opening for non-variant {} game...".format(variant))
+    logger.info("Classifying the opening for non-variant {} "
+                "game...".format(variant))
 
     while not node == game.root():
         prev_node = node.parent
@@ -452,8 +489,10 @@ def classify_opening(game):
             # Add some comments classifying the opening
             node.root().headers["ECO"] = classification["code"]
             node.root().headers["Opening"] = classification["desc"]
-            node.comment = "{} {}".format(classification["code"], classification["desc"])
-            # Remember this position so we don't analyze the moves preceding it later
+            node.comment = "{} {}".format(classification["code"],
+                                          classification["desc"])
+            # Remember this position so we don't analyze the moves preceding it
+            # later
             root_node = node
             # Break (don't classify previous positions)
             break
@@ -513,8 +552,10 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     """
     Take a PGN game and return a GameNode with engine analysis added
     - Attempt to classify the opening with ECO and identify the root node
-        * The root node is the position immediately after the ECO classification
-        * This allows us to skip analysis of moves that have an ECO classification
+        * The root node is the position immediately after the ECO
+        classification
+        * This allows us to skip analysis of moves that have an ECO
+        classification
     - Analyze the game, adding annotations where appropriate
     - Return the root node with annotations
     """
@@ -533,7 +574,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
         logger.critical(errormsg)
         raise
     except PermissionError:
-        errormsg = "Engine '{}' could not be executed. Aborting...".format(enginepath)
+        errormsg = "Engine '{}' could not be executed. Aborting...".format(
+            enginepath)
         logger.critical(errormsg)
         raise
 
@@ -541,12 +583,14 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     info_handler = chess.uci.InfoHandler()
     engine.info_handlers.append(info_handler)
     if game.board().uci_variant != "chess" or game.root().board().chess960:
-        # This is a variant game, so confirm that the engine we're using supports the variant.
+        # This is a variant game, so confirm that the engine we're using
+        # supports the variant.
         if game.root().board().chess960:
             try:
                 engine.options["UCI_Chess960"]
             except KeyError:
-                message = "UCI_Chess960 is not supported by the engine and this is a chess960 game."
+                message = "UCI_Chess960 is not supported by the engine " \
+                    "and this is a chess960 game."
                 logger.critical(message)
                 raise RuntimeError(message)
 
@@ -555,15 +599,18 @@ def analyze_game(game, arg_gametime, enginepath, threads):
                 engine_variants = engine.options["UCI_Variant"].var  # the engine must provide a list in the UCI_Variant option
                 assert game.board().uci_variant in engine_variants  # the variant must be found in the UCI_Variant option list provided by the engine
             except KeyError:
-                message = "UCI_Variant option is not supported by the engine and this is a variant game."
+                message = "UCI_Variant option is not supported by the " \
+                    "engine and this is a variant game."
                 logger.critical(message)
                 raise RuntimeError(message)
             except AssertionError:
-                message = "Variant {} is not supported by the engine.".format(game.board().uci_variant)
+                message = "Variant {} is not supported by the engine.".format(
+                    game.board().uci_variant)
                 logger.critical(message)
                 raise RuntimeError(message)
 
-        # Now that engine support for the variant is confirmed, set engine UCI options as appropriate for the variant
+        # Now that engine support for the variant is confirmed, set engine UCI
+        # options as appropriate for the variant
         engine.setoption({
             "UCI_Variant": game.board().uci_variant,
             "UCI_Chess960": game.board().chess960,
@@ -611,7 +658,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
 
     time_per_move = get_time_per_move(pass1_budget, ply_count)
 
-    logger.debug("Pass 1 budget is %i seconds, with %f seconds per move", pass1_budget, time_per_move)
+    logger.debug("Pass 1 budget is %i seconds, with %f seconds per move",
+                 pass1_budget, time_per_move)
 
     # Loop through the game doing shallow analysis
     logger.info("Performing first pass...")
@@ -624,7 +672,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
         prev_node = node.parent
 
         # Get the engine judgment of the played move in this position
-        judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+        judgment = judge_move(prev_node.board(), node.move, engine,
+                              info_handler, time_per_move)
 
         # Record the delta, to be referenced in the second pass
         node.comment = judgment
@@ -661,14 +710,16 @@ def analyze_game(game, arg_gametime, enginepath, threads):
         node = game.end()
         while not node == root_node:
             prev_node = node.parent
-            # Reset the comments to a value high enough to ensure that they all get analyzed
+            # Reset the comments to a value high enough to ensure that they all
+            # get analyzed
             comment = {}
             comment["besteval"] = "99999"
             comment["playedeval"] = "0"
             node.comment = comment
             node = prev_node
 
-    logger.debug("Pass 2 budget is %i seconds, with %f seconds per move", pass2_budget, time_per_move)
+    logger.debug("Pass 2 budget is %i seconds, with %f seconds per move",
+                 pass2_budget, time_per_move)
 
     # Loop through the game doing deep analysis on the flagged moves
     logger.info("Performing second pass...")
@@ -681,7 +732,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
 
         if needs_annotation(judgment):
             # Get the engine judgment of the played move in this position
-            judgment = judge_move(prev_node.board(), node.move, engine, info_handler, time_per_move)
+            judgment = judge_move(prev_node.board(), node.move, engine,
+                                  info_handler, time_per_move)
 
             # Verify that the engine still dislikes the played move
             if needs_annotation(judgment):
@@ -720,7 +772,8 @@ def checkgame(game):
 
     # Try to verify that the PGN file was readable
     if game.end().parent is None:
-        errormsg = "Could not render the board. Is the file legal PGN? Aborting..."
+        errormsg = "Could not render the board. Is the file legal PGN?" \
+            "Aborting..."
         logger.critical(errormsg)
         raise RuntimeError(errormsg)
 
@@ -740,12 +793,14 @@ def main():
         with open(pgnfile) as pgn:
             for game in iter(lambda: chess.pgn.read_game(pgn), None):
                 try:
-                    analyzed_game = analyze_game(game, args.gametime, args.engine, args.threads)
+                    analyzed_game = analyze_game(game, args.gametime,
+                                                 args.engine, args.threads)
                 except KeyboardInterrupt:
                     logger.critical("\nReceived KeyboardInterrupt.")
                     raise
                 except Exception as e:
-                    logger.critical("\nAn unhandled exception occurred: {}".format(type(e)))
+                    logger.critical("\nAn unhandled exception occurred: {}"
+                                    .format(type(e)))
                     raise e
                 else:
                     print(analyzed_game, '\n')
@@ -758,4 +813,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4 fileencoding=UTF-8:
+# vim: ft=python expandtab smarttab shiftwidth=4 softtabstop=4
