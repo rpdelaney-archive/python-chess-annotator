@@ -23,7 +23,7 @@ import chess.variant
 
 
 # Constants
-THRESHOLD = {
+ERROR_THRESHOLD = {
     'BLUNDER': -300,
     'MISTAKE': -150,
     'DUBIOUS': -75,
@@ -245,11 +245,11 @@ def get_nags(judgment):
 
     delta = judgment["playedeval"] - judgment["besteval"]
 
-    if delta < THRESHOLD["BLUNDER"]:
+    if delta < ERROR_THRESHOLD["BLUNDER"]:
         return [chess.pgn.NAG_BLUNDER]
-    elif delta < THRESHOLD["MISTAKE"]:
+    elif delta < ERROR_THRESHOLD["MISTAKE"]:
         return [chess.pgn.NAG_MISTAKE]
-    elif delta < THRESHOLD["DUBIOUS"]:
+    elif delta < ERROR_THRESHOLD["DUBIOUS"]:
         return [chess.pgn.NAG_DUBIOUS_MOVE]
     else:
         return []
