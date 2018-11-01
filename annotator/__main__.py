@@ -267,20 +267,17 @@ def var_end_comment(board, judgment):
     depth = judgment["depth"]
 
     if board.is_stalemate():
-        string = "Stalemate"
+        return "Stalemate"
     elif board.is_insufficient_material():
-        string = "Insufficient material to mate"
+        return "Insufficient material to mate"
     elif board.can_claim_fifty_moves():
-        string = "Fifty move rule"
+        return "Fifty move rule"
     elif board.can_claim_threefold_repetition():
-        string = "Three-fold repetition"
+        return "Three-fold repetition"
     elif board.is_checkmate():
         # checkmate speaks for itself
-        string = ""
-    else:
-        string = "{}/{}".format(str(score), str(depth))
-
-    return string
+        return ""
+    return "{}/{}".format(str(score), str(depth))
 
 
 def truncate_pv(board, pv):
