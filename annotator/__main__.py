@@ -148,10 +148,7 @@ def eval_absolute(number, white_to_move):
     move) and returns an absolute evaluation (from the point of view of white)
     """
 
-    if not white_to_move:
-        number = -number
-
-    return number
+    return number if white_to_move else -number
 
 
 def winning_chances(centipawns):
@@ -355,10 +352,7 @@ def eco_fen(board):
     board_fen = board.board_fen()
     castling_fen = board.castling_xfen()
 
-    if board.turn:  # If white to move
-        to_move = 'w'
-    else:
-        to_move = 'b'
+    to_move = 'w' if board.turn else 'b'
 
     fen = "{} {} {}".format(board_fen, to_move, castling_fen)
     return fen
