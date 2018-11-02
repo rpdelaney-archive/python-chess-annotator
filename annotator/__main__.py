@@ -586,8 +586,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
 
         if game.board().uci_variant != "chess":
             try:
-                engine_variants = engine.options["UCI_Variant"].var  # the engine must provide a list in the UCI_Variant option
-                assert game.board().uci_variant in engine_variants  # the variant must be found in the UCI_Variant option list provided by the engine
+                engine_variants = engine.options["UCI_Variant"].var
+                assert game.board().uci_variant in engine_variants
             except KeyError:
                 message = "UCI_Variant option is not supported by the " \
                     "engine and this is a variant game."
