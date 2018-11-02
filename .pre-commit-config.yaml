@@ -47,7 +47,7 @@ repos:
       # Python {{{
       # Run flake8 on your python files.
       - id: flake8
-        args: [--ignore]  # don't use the default ignore list. Catch everything!
+        args: [--ignore='']  # don't use the default ignore list. Catch everything!
 
       # Remove # -*- coding: utf-8 -*- to the top of python files.
       - id: fix-encoding-pragma
