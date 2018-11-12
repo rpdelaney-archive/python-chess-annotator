@@ -38,8 +38,20 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
 
+        # Software topics
+        'Topic :: Games/Entertainment :: Board Games',
+
         # Indicate who your project is intended for
         'Intended Audience :: End Users/Desktop',
+
+        # What kind of environment the application is intended for
+        'Environment :: Console',
+
+        # Supported operating systems
+        'Operating System :: OS Independent',
+
+        # Supported languages
+        'Natural Language :: English',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',  # noqa E501
