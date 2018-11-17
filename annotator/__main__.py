@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-__author__ = "Ryan Delaney (ryan DOT delaney AT gmail DOT com)"
+__author__ = "Ryan Delaney"
+__email__ = "ryan.delaney@gmail.com"
 __copyright__ = """© Copyright 2016-2018 Ryan Delaney. All rights reserved.
  This work is distributed WITHOUT ANY WARRANTY whatsoever; without even the
  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
