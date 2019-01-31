@@ -45,10 +45,6 @@ repos:
       # Secrets }}}
 
       # Python {{{
-      # Run flake8 on your python files.
-      - id: flake8
-        args: [--ignore='']  # don't use the default ignore list. Catch everything!
-
       # Remove # -*- coding: utf-8 -*- to the top of python files.
       - id: fix-encoding-pragma
         args: [--remove]
@@ -76,6 +72,14 @@ repos:
       #     - Ignore this requirement for specific builtin types with
       #     `--ignore=type1,type2,…`.
       #     - Forbid `dict` keyword syntax with `--no-allow-dict-kwargs`.
+
+      # Run flake8 on your python files.
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.7.3
+    hooks:
+      - id: flake8
+        args: [--ignore='']  # don't use the default ignore list. Catch everything!
+
       # Python }}}
 
   # shellcheck {{{
