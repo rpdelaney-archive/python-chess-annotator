@@ -778,6 +778,7 @@ def main():
     """
     args = parse_args()
     setup_logging(args)
+    engine = args.engine.split()
 
     pgnfile = args.file
     try:
@@ -785,7 +786,7 @@ def main():
             for game in iter(lambda: chess.pgn.read_game(pgn), None):
                 try:
                     analyzed_game = analyze_game(game, args.gametime,
-                                                 args.engine, args.threads)
+                                                 engine, args.threads)
                 except KeyboardInterrupt:
                     logger.critical("\nReceived KeyboardInterrupt.")
                     raise
