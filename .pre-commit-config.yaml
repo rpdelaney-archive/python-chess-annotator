@@ -24,8 +24,6 @@ repos:
       # Attempts to load all json files to verify syntax.
       - id: check-json
 
-      # Checks for symlinks which do not point to anything.
-      - id: check-symlinks
       # git {{{
       # Check for files that contain merge conflict strings.
       - id: check-merge-conflict
