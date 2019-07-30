@@ -22,7 +22,7 @@ setup(
     description='adds comments and analysis to chess games',
     long_description=long_description,
 
-    version='1.1.2',
+    version='1.1.3',
 
     # The project's main homepage.
     url='https://github.com/rpdelaney/python-chess-annotator',
@@ -80,7 +80,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['python-chess'],
+    install_requires=['python-chess==0.27.3'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
