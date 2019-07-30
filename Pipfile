@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "~=5.0.1"
+pytest-cov = "~=2.7.1"
+pytest-pudb = "~=0.7.0"
+
+[packages]
+python-chess = "==0.27.3"
+
+[requires]
+python_version = "3.7"
