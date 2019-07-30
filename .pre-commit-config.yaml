@@ -76,7 +76,6 @@ repos:
     rev: 3.7.3
     hooks:
       - id: flake8
-        args: [--ignore='']  # don't use the default ignore list. Catch everything!
 
       # Python }}}
 
