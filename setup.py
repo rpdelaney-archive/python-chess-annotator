@@ -87,10 +87,10 @@ setup(
     # dependencies). You can install these using the following syntax,
     # for example:
     # $ pip install -e .[dev,test]
-#   extras_require={
-#       'dev': ['check-manifest'],
-#       'test': ['coverage'],
-#   },
+    extras_require={
+#       'dev': ['black'],
+        'test': ['pytest', 'pytest-cov'],
+    },
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
