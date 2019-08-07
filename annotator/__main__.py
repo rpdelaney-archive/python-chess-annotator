@@ -115,8 +115,8 @@ def eval_numeric(info_handler):
         return cp
 
     # If we haven't returned yet, then the info_handler had garbage in it
-    raise RuntimeError("Evaluation found in the info_handler was '\
-            'unintelligible")
+    raise RuntimeError("Evaluation found in the info_handler was "
+                       "unintelligible")
 
 
 def eval_human(white_to_move, info_handler):
