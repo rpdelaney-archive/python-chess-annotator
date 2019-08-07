@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -W ignore::DeprecationWarning
 
 __author__ = "Ryan Delaney"
 __email__ = "ryan.delaney@gmail.com"
