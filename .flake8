@@ -1,3 +1,6 @@
+# vim: ft=toml:
+
 [flake8]
 ignore = E123,E133,W503
-max-doc-length = 72
+
+# EOF
