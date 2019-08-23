@@ -17,32 +17,37 @@ Installation
 
     pip3 install chess-annotator
 
+Dependencies
+------------
+
+You will need a `UCI <https://chessprogramming.wikispaces.com/UCI>`_
+chess engine for analysis.
+`stockfish <https://stockfishchess.org/download/>`_ is the default.
+
+Any of the `variants supported by python-chess <https://python-chess.readthedocs.io/en/v0.27.3/variant.html>`_ should work.
+You will need a UCI engine that supports the variant you are trying to analyze.
+`Daniel Dugovic's stockfish fork <https://github.com/ddugovic/Stockfish>`_
+supports most of the popular variants.
+
+============
+Development
+============
+
 If you clone this repository, you will have to update the eco submodule, since
-a clone does not do this automatically:
+git clone does not do this by default:
 
 ::
 
     git clone --recurse-submodules git@github.com:rpdelaney/python-chess-annotator.git
 
-Dependencies
-------------
 
-You will need a UCI[`1 <https://chessprogramming.wikispaces.com/UCI>`__]
-chess engine for analysis.
-stockfish[`2 <https://stockfishchess.org/download/>`__] is the default.
-
-Requires python-chess[`3 <https://github.com/niklasf/python-chess>`__]
-by Niklas Fiekas:
+To install development dependencies, you will need `pipenv <https://docs.pipenv.org/en/latest/>`_
+and `pre-commit <https://pre-commit.com/>`_.
 
 ::
 
-    pip3 install python-chess
-
-
-Any of the variants supported by python-chess should work.[`4 <https://python-chess.readthedocs.io/en/v0.27.3/variant.html>`__]
-You will need a UCI engine that supports the variant you are trying to analyze.
-Daniel Dugovic's stockfish fork[`5 <https://github.com/ddugovic/Stockfish>`__]
-supports most of the popular variants.
+    pipenv sync --dev
+    pre-commit install --install-hooks
 
 Usage
 -----
