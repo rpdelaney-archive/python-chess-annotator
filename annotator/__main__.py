@@ -283,7 +283,8 @@ def truncate_pv(board, pv):
     """
 
     for move in pv:
-        assert board.is_legal(move)
+        if not board.is_legal(move):
+            raise AssertionError
         board.push(move)
 
     if board.is_game_over(claim_draw=True):
@@ -588,7 +589,8 @@ def analyze_game(game, arg_gametime, enginepath, threads):
         if game.board().uci_variant != "chess":
             try:
                 engine_variants = engine.options["UCI_Variant"].var
-                assert game.board().uci_variant in engine_variants
+                if not game.board().uci_variant in engine_variants:
+                    raise AssertionError
             except KeyError:
                 message = "UCI_Variant option is not supported by the " \
                     "engine and this is a variant game."
