@@ -400,7 +400,10 @@ def acpl(cpl_list):
     Average Centipawn Loss
     Takes a list of integers and returns an average of the list contents
     """
-    return sum(cpl_list) / len(cpl_list)
+    try:
+        return sum(cpl_list) / len(cpl_list)
+    except ZeroDivisionError:
+        return 0
 
 
 def clean_game(game):
