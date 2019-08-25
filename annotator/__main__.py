@@ -448,51 +448,52 @@ def classify_opening(game):
     Returns the classified game and root_node, which is the node where the
     classification was made
     """
-    ecofile = os.path.join(os.path.dirname(__file__), 'eco/eco.json')
-    ecodata = json.load(open(ecofile, 'r'))
+    ecopath = os.path.join(os.path.dirname(__file__), 'eco/eco.json')
+    with open(ecopath, 'r') as ecofile:
+        ecodata = json.load(ecofile)
 
-    ply_count = 0
+        ply_count = 0
 
-    root_node = game.root()
-    node = game.end()
+        root_node = game.root()
+        node = game.end()
 
-    # Opening classification for variant games is not implemented (yet?)
-    is_960 = root_node.board().chess960
-    if is_960:
-        variant = "chess960"
-    else:
-        variant = type(node.board()).uci_variant
+        # Opening classification for variant games is not implemented (yet?)
+        is_960 = root_node.board().chess960
+        if is_960:
+            variant = "chess960"
+        else:
+            variant = type(node.board()).uci_variant
 
-    if variant != "chess":
-        logger.info("Skipping opening classification in variant "
-                    "game: {}".format(variant))
-        return node.root(), root_node, game_length(game)
+        if variant != "chess":
+            logger.info("Skipping opening classification in variant "
+                        "game: {}".format(variant))
+            return node.root(), root_node, game_length(game)
 
-    logger.info("Classifying the opening for non-variant {} "
-                "game...".format(variant))
+        logger.info("Classifying the opening for non-variant {} "
+                    "game...".format(variant))
 
-    while not node == game.root():
-        prev_node = node.parent
+        while not node == game.root():
+            prev_node = node.parent
 
-        fen = eco_fen(node.board())
-        classification = classify_fen(fen, ecodata)
+            fen = eco_fen(node.board())
+            classification = classify_fen(fen, ecodata)
 
-        if classification["code"] != "":
-            # Add some comments classifying the opening
-            node.root().headers["ECO"] = classification["code"]
-            node.root().headers["Opening"] = classification["desc"]
-            node.comment = "{} {}".format(classification["code"],
-                                          classification["desc"])
-            # Remember this position so we don't analyze the moves preceding it
-            # later
-            root_node = node
-            # Break (don't classify previous positions)
-            break
+            if classification["code"] != "":
+                # Add some comments classifying the opening
+                node.root().headers["ECO"] = classification["code"]
+                node.root().headers["Opening"] = classification["desc"]
+                node.comment = "{} {}".format(classification["code"],
+                                              classification["desc"])
+                # Remember this position so we don't analyze the moves
+                # preceding it later
+                root_node = node
+                # Break (don't classify previous positions)
+                break
 
-        ply_count += 1
-        node = prev_node
+            ply_count += 1
+            node = prev_node
 
-    return node.root(), root_node, ply_count
+        return node.root(), root_node, ply_count
 
 
 def add_acpl(game, root_node):

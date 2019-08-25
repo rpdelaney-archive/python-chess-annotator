@@ -401,19 +401,21 @@ class test_add_annotation(unittest.TestCase):
 class test_classify_fen(unittest.TestCase):
 
     def test_eco_json(self):
-        ecofile = os.path.join(os.path.dirname(__file__),
-                               '../annotator/eco/eco.json')
-        ecodata = json.load(open(ecofile, 'r'))
+        ecopath = os.path.join(
+            os.path.dirname(__file__), '../annotator/eco/eco.json'
+        )
+        with open(ecopath, 'r') as ecofile:
+            ecodata = json.load(ecofile)
 
-        for row in ecodata:
-            fen = "{} {}".format(row["f"], '- 0 1')
-            chess.Board(fen=fen)
+            for row in ecodata:
+                fen = "{} {}".format(row["f"], '- 0 1')
+                chess.Board(fen=fen)
 
-            classification = annotator.classify_fen(row["f"], ecodata)
+                classification = annotator.classify_fen(row["f"], ecodata)
 
-            assert classification["code"] == row["c"]
-            assert classification["desc"] == row["n"]
-            assert classification["path"] == row["m"]
+                assert classification["code"] == row["c"]
+                assert classification["desc"] == row["n"]
+                assert classification["path"] == row["m"]
 
 
 class test_clean_game(unittest.TestCase):
