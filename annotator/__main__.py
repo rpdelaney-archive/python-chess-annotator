@@ -354,8 +354,7 @@ def eco_fen(board):
 
     to_move = 'w' if board.turn else 'b'
 
-    fen = "{} {} {}".format(board_fen, to_move, castling_fen)
-    return fen
+    return "{} {} {}".format(board_fen, to_move, castling_fen)
 
 
 def debug_print(node, judgment):
