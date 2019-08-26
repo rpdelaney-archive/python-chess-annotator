@@ -22,7 +22,7 @@ setup(
     description='adds comments and analysis to chess games',
     long_description=long_description,
 
-    version='1.1.3',
+    version='1.1.4',
 
     # The project's main homepage.
     url='https://github.com/rpdelaney/python-chess-annotator',
@@ -54,7 +54,8 @@ setup(
         'Natural Language :: English',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',  # noqa E501
+        'License :: OSI Approved :: '
+        'GNU General Public License v3 or later (GPLv3+)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
@@ -88,23 +89,17 @@ setup(
     # for example:
     # $ pip install -e .[dev,test]
     extras_require={
-#       'dev': ['black'],
+        # 'dev': ['black'],
         'test': ['pytest', 'pytest-cov'],
     },
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
-#   package_data={
-#       'eco': ['annotator/eco/eco.json'],
-#   },
+    # package_data={
+    #     'eco': ['annotator/eco/eco.json'],
+    # },
     include_package_data=True,
-
-    # Although 'package_data' is the preferred approach, in some case you may
-    # need to place data files outside of your packages. See:
-    # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files # noqa
-    # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-#   data_files=[('my_data', ['data/data_file'])],
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
