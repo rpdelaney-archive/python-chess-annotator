@@ -540,7 +540,7 @@ def get_pass2_budget(total_budget, pass1_budget):
 
 
 def get_time_per_move(pass_budget, ply_count):
-    return float(pass_budget) / float(ply_count)
+    return float(pass_budget) / float(max(ply_count, 1))
 
 
 def analyze_game(game, arg_gametime, enginepath, threads):
@@ -702,7 +702,7 @@ def analyze_game(game, arg_gametime, enginepath, threads):
     except ZeroDivisionError:
         logger.debug("No errors found on first pass!")
         # There were no mistakes in the game, so deeply analyze all the moves
-        time_per_move = pass2_budget / ply_count
+        time_per_move = pass2_budget / max(ply_count, 1)
         node = game.end()
         while not node == root_node:
             prev_node = node.parent
