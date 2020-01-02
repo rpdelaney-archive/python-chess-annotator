@@ -1,5 +1,10 @@
 python-chess-annotator
 ======================
+|MAINTAINED| |LANGUAGE| |VERSION|
+.. |MAINTAINED| image:: https://img.shields.io/maintenance/no/2019?logoColor=informational
+.. |LANGUAGE| image:: https://img.shields.io/pypi/pyversions/chess-annotator
+.. |VERSION| image:: https://img.shields.io/pypi/v/chess-annotator
+   :target: https://pypi.org/project/chess-annotator
 
 Takes a PGN file as an argument and annotates the games in that file
 using an engine.
